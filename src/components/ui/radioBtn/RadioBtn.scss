@@ -1,0 +1,22 @@
+.input-radio {
+  @apply hidden;
+}
+.input-radio:checked +
+.custom-radio__btn::before {
+  transform: scale(1);
+}
+.input-radio:checked +
+.custom-radio__btn::after {
+  @apply border-lightBlue
+}
+.custom-radio__btn {
+  @apply cursor-pointer;
+  &::after {
+    @apply content-[""] absolute -left-6 top-1 border-2 border-white w-4.5 h-4.5 rounded-full transition-colors duration-300;
+  }
+  &::before {
+    transform: scale(0);
+    @apply content-[""] absolute -left-5 top-2 bg-lightBlue w-2.5 h-2.5 rounded-full transition-transform duration-300;
+  }
+}
+

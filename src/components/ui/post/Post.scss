@@ -1,0 +1,20 @@
+.post {
+  @apply w-full relative;
+
+  .author {
+    @apply flex gap-4 items-center;
+  }
+  .options-menu__btn {
+    @apply w-6 h-6 cursor-pointer transition-colors hover:text-lightBlue;
+
+    &.options-menu--active {
+      @apply text-lightBlue;
+    }
+  }
+  .post-content {
+    @apply flex flex-col gap-4 mt-3;
+  }
+  .add-comment {
+    @apply flex justify-between gap-3.5 items-center;
+  }
+}

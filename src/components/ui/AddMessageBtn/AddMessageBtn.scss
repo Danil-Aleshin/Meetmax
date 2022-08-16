@@ -1,0 +1,11 @@
+.add-message__btn{
+  @apply h-10 w-10 bg-lightBlue-2 flex justify-center items-center rounded-md flex-shrink-0;
+  &:hover{
+    .paper-icon{
+      @apply translate-x-0.5
+    }
+  }
+  .paper-icon{
+    @apply w-5.5 rotate-90 text-lightBlue transition-transform duration-200 
+  }
+}

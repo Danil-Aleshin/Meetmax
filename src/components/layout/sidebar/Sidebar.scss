@@ -1,0 +1,40 @@
+.sidebar {
+  @apply w-56 p-3 bg-white dark:bg-lightBlack;
+  grid-area: sidebar;
+}
+.nav__list {
+  @apply flex flex-col gap-3;
+}
+.nav__item {
+  @apply h-11;
+}
+.nav__title {
+  @apply transition-colors duration-300;
+}
+.nav__icon {
+  @apply w-5 text-blue dark:text-white transition-colors duration-300;
+}
+
+
+.nav__link {
+  @apply flex items-center p-3 gap-3 rounded-xl transition-colors duration-300;
+  &:hover {
+    @apply bg-lightBlue;
+    .nav__title {
+      @apply text-white;
+    }
+    .nav__icon {
+      @apply text-white;
+    }
+  }
+
+  &.active--link {
+    @apply bg-lightBlue;
+    .nav__title {
+      @apply text-white;
+    }
+    .nav__icon {
+      @apply text-white;
+    }
+  }
+}

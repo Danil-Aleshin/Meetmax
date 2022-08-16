@@ -1,0 +1,10 @@
+.header{
+  @apply p-3 flex justify-between bg-white dark:bg-lightBlack;
+  grid-area: header;
+}
+.profile-block{
+  @apply cursor-pointer flex gap-3 rounded-xl items-center h-10 bg-lightGray dark:bg-darkBlue;
+}
+.profile__name{
+  @apply pl-4;
+}
