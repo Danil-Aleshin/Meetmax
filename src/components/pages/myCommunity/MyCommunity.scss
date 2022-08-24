@@ -1,0 +1,20 @@
+.community__item {
+  @apply w-fit h-11 border border-superLightGray dark:border-inputBorderBlue rounded-xl flex items-center justify-center cursor-pointer transition-colors duration-300;
+  
+  &.community__item--active{
+    @apply bg-lightBlue;
+    .text{
+      @apply text-white;
+    }
+  }
+  .text{
+    @apply px-16 transition-colors duration-300;
+  }
+}
+
+.profile-card__list{
+  display: grid;
+  grid-template-columns: repeat(2,302px);
+  justify-content: center;
+  gap: 16px;
+}

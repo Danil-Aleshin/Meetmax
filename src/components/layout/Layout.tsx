@@ -3,14 +3,17 @@ import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
 import'./Layout.scss'
 import { useLocation } from 'react-router-dom'
-import { IGlobalContentData, IPost, IProfile, IUserData, IUserInfo } from '../types/data'
+import { IChat, ICommunity, IUserData, IUserInfo, userID } from '../types/data'
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
-import { doc, onSnapshot, where } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../../firebaseConfig'
-import { getPosts } from '../../store/PostsSlice'
+import { getAllUsers, getCurrentUser } from '../../store/UsersSlice'
+import Friends from '../layout/friends/Friends'
+import { getFriends } from '../../store/FriendsSlice'
+import { getFollowers, getFollowing } from '../../store/FollowersSlice'
 import { getChats } from '../../store/ChatSlice'
-import { getProfile, getUserInfo } from '../../store/AuthenticationSlice'
-import { getCurrentUser, getUserPosts } from '../../store/UsersSlice'
+import { hidePreloader, showPreloader } from '../../store/PreloaderSlide'
+import Preloader from '../ui/Preloader'
 
 
 interface propsLayout{
@@ -21,68 +24,94 @@ interface propsLayout{
 const Layout:FC<propsLayout> = ({children}) => {
 
   const location = useLocation()
-  const {isAuth,userID} = useAppSelector(state=> state.auth)
 
+  const {isAuth,userID} = useAppSelector(state=> state.auth)
+  const {preloaderShowing} = useAppSelector(state => state.preloader)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    dispatch(hidePreloader())
     if(isAuth){
-      const unsubscribe = onSnapshot(doc(db, "users", userID,"profile","data"),(doc)=>{
-        const data = doc.data() as IProfile
-        dispatch(getCurrentUser(data))
-        
-      });
-      return () => unsubscribe()
-    }
-  }, [isAuth])
+        dispatch(showPreloader())
+        const fetchUsers = onSnapshot(
+          query(collection(db, "users")),
+          (querySnapshot) =>{
+          const usersData:IUserInfo[] = []
+          querySnapshot.forEach((doc) => {
+            usersData.push(doc.data() as IUserInfo);
+        });
+          usersData.map(user =>
+            user.userID === userID && dispatch(getCurrentUser(user))
+          )
+          dispatch(getAllUsers(usersData))
+          dispatch(hidePreloader())
+        })
+    
+        const fetchFollowers = onSnapshot(
+          query(collection(db, "followers",userID,"data")), 
+          (querySnapshot) =>{
+          const followersData:ICommunity[] = []
+          querySnapshot.forEach((doc) => {
+            followersData.push(doc.data() as ICommunity);
+        });
+          dispatch(getFollowers(followersData))
+        })
+  
+        const fetchFollowing = onSnapshot(query(collection(db, "following",userID,"data")), (querySnapshot) =>{
+          const followingData:ICommunity[] = []
+          querySnapshot.forEach((doc) => {
+            followingData.push(doc.data() as ICommunity);
+        });
+          dispatch(getFollowing(followingData))
+        })
+  
+        const fetchFriends = onSnapshot(query(collection(db, "friends",userID,"data")), (querySnapshot) =>{
+          const friendsData:ICommunity[] = []
+          querySnapshot.forEach((doc) => {
+            friendsData.push(doc.data() as ICommunity);
+        });
+          dispatch(getFriends(friendsData))
+        })
+  
+        const fetchChats = onSnapshot(query(collection(db, "chats",userID,"companion")), (querySnapshot) =>{
+          const chatsData:IChat[] = []
+          querySnapshot.forEach((doc) => {
+            chatsData.push(doc.data() as IChat);
+        });
+          dispatch(getChats(chatsData))
+          
+        })
 
-  useEffect(() => {
-    if(isAuth){
-      const unsubscribe = onSnapshot(doc(db, "users",userID,"posts","data"),(doc)=>{
-        const data = doc.data() as any
-        dispatch(getUserPosts(data.posts))
-        
-      });
-      return () => unsubscribe()
-    }
-  }, [isAuth])
-
-  useEffect(() => {
-    if(isAuth){
-      const unsubscribe = onSnapshot(doc(db, "users", userID,"userInfo","data"),(doc)=>{
-        const data = doc.data() as IUserInfo
-        dispatch(getUserInfo(data))
-        
-      });
-      return () => unsubscribe()
-    }
-  }, [isAuth])
-
-  useEffect(() => {
-    if(isAuth){
-      const unsubscribe = onSnapshot(doc(db, "global", "posts"),(doc)=>{
-        const data = doc.data() as IGlobalContentData
-        dispatch(getPosts(data.posts))
-      
-      });
-      return () => unsubscribe()
+        return () => {
+          fetchFollowing()
+          fetchFollowers()
+          fetchUsers()
+          fetchFriends()
+          fetchChats()
+        }
     }
   }, [isAuth])
 
   return (
-
-        <div className="container">
-          {location.pathname === "/login" || location.pathname === "/registration"
-            ? children
-            :<div className="table">
+    <>
+    {preloaderShowing
+      ? <Preloader/>
+      : <div className="container">
+          {location.pathname === "/login"
+          || location.pathname === "/registration"
+          ? children
+          : <div className="table">
               <Sidebar/>
               <Header/>
               <main className={"mainContent"}>
                 {children}
               </main>
+              <Friends/>
             </div>
           }
         </div>
+    }
+    </>
   )
 }
 

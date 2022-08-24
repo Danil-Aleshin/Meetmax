@@ -11,7 +11,7 @@ interface IInputForm{
 
 const InputText:FC<IInputForm> = memo(({Icon,placeholder,className,value,onChange}) => {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {Icon && <Icon className="w-5 absolute left-4 top-2.5"/>}
       <input
         value={value}

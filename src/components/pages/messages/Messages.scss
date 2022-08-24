@@ -1,0 +1,26 @@
+.test {
+  @apply w-full flex justify-between gap-3 items-center cursor-pointer;
+
+  
+  &.anotherUser {
+    @apply flex-row-reverse;
+
+    .message-card{
+      @apply flex-row-reverse;
+    }
+  }
+  &:hover{
+    .options-menu-message{
+      @apply opacity-100;
+    }
+  }
+
+  .message-card {
+    @apply flex gap-2.5 items-center;
+
+
+  }
+  .options-menu-message{
+    @apply opacity-0 self-start flex gap-1 items-center;
+  }
+}

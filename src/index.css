@@ -13,8 +13,7 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-@layer components{
-
+@layer components {
 }
 
 @layer base {
@@ -31,14 +30,15 @@ code {
   h3,
   h4,
   h5,
+  button,
   input {
     @apply text-blue font-semibold dark:text-white;
   }
-  main,input {
+  main,
+  input {
     @apply bg-lightGray dark:bg-darkBlue;
   }
   ul {
     @apply list-none;
   }
-
 }

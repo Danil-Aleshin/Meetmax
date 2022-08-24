@@ -1,0 +1,14 @@
+.options-menu__btn {
+  @apply w-6 h-6 cursor-pointer transition-colors hover:text-lightBlue;
+
+  &.options-menu--active {
+    @apply text-lightBlue;
+  }
+}
+.options-menu{
+  @apply transition-opacity duration-200 opacity-0 pointer-events-none;
+  
+  &.options-menu--active{
+    @apply transition-opacity duration-200 opacity-100;
+  }
+}

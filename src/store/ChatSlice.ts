@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { IChat, IMessage} from "../components/types/data";
+import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+import { IChat, IMessage, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 
 
@@ -12,10 +12,14 @@ interface messagesState{
 }
 
 interface propsSendMessage{
-  forUserID:string,
-  messageObj:IMessage,
+  userID:userID,
+  companionID:userID,
+  message:string,
 }
-
+interface propsStartAChat{
+  userID:userID,
+  companionID:userID,
+}
 //state
 const initialState:messagesState = {
   chats:[],
@@ -24,24 +28,45 @@ const initialState:messagesState = {
   error:false
 }
 
-export const sendMessage = createAsyncThunk<any,propsSendMessage,{rejectValue:string,state:{chats: IChat[]}}>(
+export const sendMessage = createAsyncThunk<any,propsSendMessage,{rejectValue:string}>(
   "chats/sendMessage",
-  async function({forUserID,messageObj},{rejectWithValue,getState}){
-    const newChats = getState().chats.map(item=>{
-      if (item.companionID === forUserID ) {
-        item.messages.push(messageObj)
-      }
-    })
+  async function({companionID,message,userID},{rejectWithValue}){
+    const newMessage:IMessage = {
+      fromUserID:userID,
+      message,
+      date:Date.now().toString()
+    }
+    
     try {
-      await updateDoc(doc(db,"users", forUserID),{
-        message: newChats
-      });
+      await setDoc(doc(db,"chats", userID, "companion",companionID),{
+        companionID:companionID,
+        messages:arrayUnion(newMessage)
+      },{merge:true});
+      await setDoc(doc(db,"chats", companionID, "companion",userID),{
+        companionID:userID,
+        messages:arrayUnion(newMessage)
+      },{merge:true});
     } catch (error) {
       console.log(error)
       return rejectWithValue("failed to send message")
     }
   }
 )
+export const startAChat = createAsyncThunk<any,propsStartAChat,{rejectValue:string}>(
+  "chats/startAChat",
+  async function({companionID,userID},{rejectWithValue}){
+    try {
+      await setDoc(doc(db,"chats", userID, "companion",companionID),{
+        companionID:companionID,
+        messages:[],
+      });
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("failed to start a chat")
+    }
+  }
+)
+
 
 const ChatSlice = createSlice({
   name: "chats",

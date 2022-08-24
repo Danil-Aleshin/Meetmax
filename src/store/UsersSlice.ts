@@ -1,36 +1,54 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { IPost, IProfile } from "../components/types/data"
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { doc, updateDoc } from "firebase/firestore";
+import { IUserInfo, userID } from "../components/types/data"
+import { db } from "../firebaseConfig";
 
 
 interface usersState{
-  currentUser:IProfile,
-  allUsers:IProfile[],
-  userPosts:IPost[],
+  currentUser:IUserInfo,
+  currentUserFriends:userID[],
+  allUsers:IUserInfo[],
+}
+interface propsUploadImg{
+  userID:userID,
+  downloadURL:string,
 }
 const initialState:usersState = {
-  currentUser:{} as IProfile,
-  userPosts:[],
+  currentUser:{} as IUserInfo,
+  currentUserFriends:[],
   allUsers:[],
 }
 
+export const uploadImg = createAsyncThunk<any,propsUploadImg,{rejectValue:string}>(
+  "users/uploadImg",
+  async function({userID,downloadURL},{rejectWithValue}){
+  
+    try {
+      await updateDoc(doc(db,"users", userID),{
+        profileImg:downloadURL
+      });
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("error adding to friends")
+    }
+  }
+)
+
 const UsersSlice = createSlice({
-  name: "chats",
+  name: "users",
   initialState,
   reducers: {
-    getCurrentUser(state,action:PayloadAction<IProfile>){
+    getCurrentUser(state,action:PayloadAction<IUserInfo>){
       state.currentUser = action.payload
     },
-    getAllUsers(state,action:PayloadAction<IProfile[]>){
+    getAllUsers(state,action:PayloadAction<IUserInfo[]>){
       state.allUsers = action.payload
-    },
-    getUserPosts(state,action:PayloadAction<IPost[]>){
-      state.userPosts = action.payload
     },
   },
 
 
 })
 
-export const {getAllUsers,getCurrentUser,getUserPosts} = UsersSlice.actions
+export const {getAllUsers,getCurrentUser} = UsersSlice.actions
 
 export default UsersSlice.reducer

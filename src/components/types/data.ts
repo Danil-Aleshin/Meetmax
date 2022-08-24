@@ -5,31 +5,12 @@ export type TypeSetState<T> = Dispatch<SetStateAction<T>>
 export type userID = string
 
 export interface IUserData{
-  followers:userID[],
-  following:userID[],
-  posts:IPost[],
-  notification:any[],
-  userInfo:IUserInfo,
-  profile:IProfile,
-  friends:userID[],
-  chats:IChat[]
-}
-export interface IGlobalContentData{
-  posts:IPost[]
-}
-export interface IChat{
-  companionID:userID
-  lastMessageTime:string,
-  messages:IMessage[]
+  allUsers:IUserInfo[],
 }
 export interface IUserInfo{
-  userID:userID,
+  userID:userID
   email:string,
-  password:string,
-  status:"online" | "offline"
-}
-export interface IProfile{
-  tagName:string,
+  status:"online" | "offline",
   firstName:string,
   lastName:string,
   location?:string,
@@ -38,11 +19,16 @@ export interface IProfile{
   profileImg:string,
   phoneNumber:number,
 }
+export interface IChat{
+  companionID:userID
+  messages:IMessage[]
+}
 export interface IMessage{
   fromUserID:userID,
   date:string,
   message:string,
 }
+
 export interface IPost{
   id:string,
   authorID:userID,
@@ -58,6 +44,11 @@ export interface IComment{
   date:string,
   authorID:userID,
   text:string,
+}
+
+export interface ICommunity{
+  userID:userID,
+  docID:string,
 }
 
 export interface authValue {

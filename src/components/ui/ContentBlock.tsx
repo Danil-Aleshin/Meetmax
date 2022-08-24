@@ -8,7 +8,7 @@ interface propsContentBlock{
 
 const ContentBlock:React.FC<propsContentBlock> = ({className,children}) => {
   return (
-    <div className={'p-4 rounded-xl bg-white dark:bg-lightBlack inline-block ' + className}>
+    <div className={'p-4 rounded-xl bg-white dark:bg-lightBlack inline-block drop-shadow-md ' + className}>
       {children}
     </div>
   )

@@ -12,8 +12,8 @@ const Header:FC = () => {
 
   const search = useInput()
 
-  const currUser = useAppSelector(state => state.users.currentUser)
-
+  const {currentUser} = useAppSelector(state => state.users)
+  const {userID} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
 
   const logout = () =>{
@@ -36,9 +36,9 @@ const Header:FC = () => {
       </div>
       <button onClick={()=>logout()}>Выйти</button>
       <div className="profile-block">
-        <div className="profile__name">{currUser.firstName + " " + currUser.lastName}</div>
-        <Link to={`/${currUser.tagName}`}>
-          <img className='rounded-xl h-10' width={40} height={40} src={currUser.profileImg} alt="profile" />
+        <div className="profile__name">{currentUser.firstName + " " + currentUser.lastName}</div>
+        <Link to={`/${userID}`}>
+          <img className='rounded-xl h-10' width={40} height={40} src={currentUser.profileImg} alt="profile" />
         </Link>
       </div>
     </header>

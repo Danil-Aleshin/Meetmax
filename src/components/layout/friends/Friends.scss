@@ -1,4 +1,4 @@
 .friends {
-  @apply w-72 p-3;
+  @apply w-full px-3 flex flex-col gap-6;
   grid-area: friends;
 }

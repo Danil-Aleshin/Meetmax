@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 
 const MainLogo:FC = () => {
   return (
-    <Link to="/" className="">
-      <img width={150} src="/img/logo.png" alt="meetmax" />
+    <Link to="/" className="flex-shrink-0">
+      <img width={145} src="/img/lg.jpg" alt="meetmax" />
     </Link>
   )
 }

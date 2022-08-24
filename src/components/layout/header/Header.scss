@@ -1,5 +1,5 @@
 .header{
-  @apply p-3 flex justify-between bg-white dark:bg-lightBlack;
+  @apply p-3 flex justify-between bg-white dark:bg-lightBlack items-center;
   grid-area: header;
 }
 .profile-block{

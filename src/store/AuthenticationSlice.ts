@@ -1,11 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserCredential } from 'firebase/auth'
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { authValue, IProfile, IUserData, IUserInfo, userID } from "../components/types/data";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { authValue, IUserData, IUserInfo, userID } from "../components/types/data";
 import { auth, db } from "../firebaseConfig";
 
 interface stateAuthentication{
-  user:IUserData,
   isAuth:boolean,
   loading:boolean,
   error:boolean,
@@ -25,7 +24,6 @@ interface propsFetchRegistration extends authValue{
 
 //state
 const initialState:stateAuthentication = {
-  user:{} as IUserData,
   isAuth: false,
   loading:false,
   error:false,
@@ -71,58 +69,25 @@ export const fetchRegistration = createAsyncThunk<any,propsFetchRegistration,{re
       const user = userCredential.user;
       const userID = user.uid
 
-      // const newUser:IUserData ={
-      //   userInfo:{
-      //     userID:userID,
-      //     email:email,
-      //     password:password,
-      //     status:"offline",
-      //   },
-      //   profile:{
-      //     firstName:firstName,
-      //     lastName:lastName,
-      //     gender:gender,
-      //     profileImg:"/img/noProfileImg.png",
-      //     dateOfBirthday:dateOfBirthday,
-      //     location:"",
-      //     phoneNumber:phoneNumber,
-      //   },
-      //   chats:[],
-      //   followers:[],
-      //   following:[],
-      //   friends:[],
-      //   notification:[],
-      //   posts:[],
-      // } 
-
-
-      // setDoc(doc(db, 'users', userID), {
-      //   userInfo: newUser.userInfo,
-      //   profile:newUser.profile,
-      //   chats:newUser.chats,
-      //   followers:newUser.followers,
-      //   following:newUser.following,
-      //   friends:newUser.friends,
-      //   notification:newUser.notification,
-      //   posts:newUser.posts,
-      // }, { merge: true })
-
-      setDoc(doc(db, 'users', userID,"userInfo","data"),{
+      setDoc(doc(db, 'users', userID),{
         userID:userID,
         email:email,
-        password:password,
         status:"offline",
-      })
-      setDoc(doc(db, 'users', userID,"profile","data"),{
-        tagName:"",
         firstName:firstName,
         lastName:lastName,
         gender:gender,
-        profileImg:"/img/noProfileImg.png",
+        profileImg:"https://firebasestorage.googleapis.com/v0/b/meetmax-ada29.appspot.com/o/noProfileImg.png?alt=media&token=bf855d42-e711-4d1b-8c9e-cf0d9325bd0c",
         dateOfBirthday:dateOfBirthday,
         location:"",
         phoneNumber:phoneNumber,
       })
+      setDoc(doc(db,'chats',userID,"data"),{})
+      setDoc(doc(db,'followers',userID,"data"),{})
+      setDoc(doc(db,'following',userID,"data"),{})
+      setDoc(doc(db,'friends',userID,"data"),{})
+      setDoc(doc(db,'notification',userID,"data"),{})
+      setDoc(doc(db,'followers',userID,"data"),{})
+      setDoc(doc(db,'posts',userID,"data"),{})
     })
     .catch((error) => {
       console.log(error.code);
@@ -147,14 +112,7 @@ export const fetchSignOut = createAsyncThunk<any,undefined,{rejectValue:string}>
 const AuthenticationSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    getUserInfo(state,action:PayloadAction<IUserInfo>){
-      state.user.userInfo = action.payload
-    },
-    getProfile(state,action:PayloadAction<IProfile>){
-      state.user.profile = action.payload
-    }
-  },
+  reducers: {},
   extraReducers:(builder)=>{
     builder
     //auth
@@ -185,7 +143,6 @@ const AuthenticationSlice = createSlice({
       })
       .addCase(fetchSignOut.fulfilled,(state)=>{
         state.userID = ""
-        state.user = {} as IUserData
         state.isAuth = false
         state.loading = false
         state.status = "signOut fulfilled"
@@ -198,6 +155,6 @@ const AuthenticationSlice = createSlice({
   }
 
 })
-export const {getUserInfo,getProfile} = AuthenticationSlice.actions
+export const {} = AuthenticationSlice.actions
 
 export default AuthenticationSlice.reducer
