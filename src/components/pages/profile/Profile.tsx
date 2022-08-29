@@ -1,12 +1,10 @@
-import { collection, doc, onSnapshot, query, writeBatch } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { db,storage } from '../../../firebaseConfig'
 import { follow, unfollow } from '../../../store/FollowersSlice'
 import { addToFriends } from '../../../store/FriendsSlice'
-import { fetchCreatePost } from '../../../store/PostsSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
-import useInput from '../../hooks/useInput'
 import { ICommunity, IPost, IUserInfo, userID } from '../../types/data'
 import Button from '../../ui/Button'
 import CreatePostForm from '../../ui/CreatePostForm'
@@ -16,6 +14,7 @@ import {ref,uploadBytesResumable,getDownloadURL} from "firebase/storage"
 import './Profile.scss'
 import { uploadImg } from '../../../store/UsersSlice'
 import { startAChat } from '../../../store/ChatSlice'
+import UserImg from '../../ui/UserImg'
 
 
 const Profile:FC = () => {
@@ -35,16 +34,15 @@ const Profile:FC = () => {
   const [userFollowers, setUserFollowers] = useState<ICommunity[]>([])
   const [userFollowing, setUserFollowing] = useState<ICommunity[]>([])
   const [newImg, setNewImg] = useState<any>()
-  const [isFollowing, setIsFollowing] = useState<ICommunity>()
+  const [isFollowing, setIsFollowing] = useState<any>()
 
   const {id} = useParams()
-
+  console.log(isFollowing)
   const {userID} = useAppSelector(state => state.auth)
   const {allUsers} = useAppSelector(state => state.users)
   const {currentUserFollowing} = useAppSelector(state => state.followers)
   const dispatch = useAppDispatch()
 
-  const newPostInput = useInput()
   const navigate = useNavigate()
   useEffect(() => {
 
@@ -134,15 +132,9 @@ const Profile:FC = () => {
   }, [newImg])  
 
   useEffect(() => {
-    currentUserFollowing.map(following =>following.userID === id && setIsFollowing(following))
+    currentUserFollowing.map(following =>following.userID === id ?setIsFollowing(following) : setIsFollowing(""))
+  },[userFollowers,userFollowing])
 
-  },[])
-
-  const addNewPost = () =>{
-    const text = newPostInput.value
-    dispatch(fetchCreatePost({text,userID}))
-    newPostInput.setValue("")
-  }
 
   const addToFriendsFunc = () => {
     const newFriendID = id ? id : ""
@@ -159,6 +151,7 @@ const Profile:FC = () => {
 
     dispatch(unfollow({followerID,userID,docID}))
   }
+
   const startAChatFunc = () =>{
     const companionID = userInfo.userID
     dispatch(startAChat({companionID,userID}))
@@ -169,8 +162,12 @@ const Profile:FC = () => {
     <div>
       <div className="w-full shadow-xl rounded-xl p-7 flex justify-between">
         <div className="w-fit flex flex-col gap-1 items-center">
-          <div className="profile__img">
-            <img src={userInfo.profileImg} width={150} className='rounded-full border-4 border-white' alt="" />
+          <div className="profile__img h-37.5">
+            <UserImg
+              className='border-4 border-white h-full'
+              width='150'
+              src={userInfo.profileImg}
+            />
             {id === userID &&
               <>
                 <label className='new-img' htmlFor='newImgBtn'></label>
@@ -208,11 +205,7 @@ const Profile:FC = () => {
         <div className="w-129 flex flex-col gap-7">
           {
             id === userID && 
-              <CreatePostForm
-                addNewPost={addNewPost}
-                onChange={newPostInput.onChange}
-                value={newPostInput.value}
-              />
+              <CreatePostForm/>
           }
           {userPosts.map(post => 
             <Post

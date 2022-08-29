@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
 import { userID } from '../types/data'
 import Button from './Button'
 import ContentBlock from './ContentBlock'
+import UserImg from './UserImg'
 
 interface propsProfileCard{
   followerID:userID,
@@ -45,7 +46,11 @@ const ProfileCard:FC<propsProfileCard> = memo(({
     <ContentBlock className='h-37'>
       <div className='flex flex-col gap-4 justify-center h-full'>
         <Link to={`/${followerID}`} className="flex items-center gap-3">
-          <img className='rounded-full' src={profileImg} width={60} alt="" />
+          <UserImg
+            width="60"
+            className='h-15'
+            src={profileImg}
+          />
           <div className="flex flex-col gap-1">
             <h3>{firstName + " " + lastName}</h3>
           </div>

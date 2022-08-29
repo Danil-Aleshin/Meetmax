@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
 
 export type TypeSetState<T> = Dispatch<SetStateAction<T>>
@@ -19,21 +20,28 @@ export interface IUserInfo{
   profileImg:string,
   phoneNumber:number,
 }
-export interface IChat{
+export interface IChatData{
   companionID:userID
   messages:IMessage[]
 }
+export interface IChat{
+  user:IUserInfo,
+  chat:IChatData
+}
+
 export interface IMessage{
+  id:string,
   fromUserID:userID,
-  date:string,
+  date:Date,
   message:string,
+  state:"read" | "unread"
 }
 
 export interface IPost{
   id:string,
   authorID:userID,
   text:string,
-  date:number,
+  date:Date,
   imgs?:userID[],
   likes:userID[],
   comments:IComment[],
@@ -41,7 +49,7 @@ export interface IPost{
 }
 
 export interface IComment{
-  date:string,
+  date:Date,
   authorID:userID,
   text:string,
 }

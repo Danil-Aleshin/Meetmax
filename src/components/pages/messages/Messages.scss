@@ -1,26 +1,60 @@
+.messages__list {
+  @apply flex flex-col h-full overflow-y-auto gap-3;
+
+  &:hover{
+    &::-webkit-scrollbar {
+      @apply block;
+    }
+  }
+  &::-webkit-scrollbar {
+    @apply w-1 hidden;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-superLightGray;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply rounded-3xl border-gray bg-gray;
+  }
+}
+
 .test {
   @apply w-full flex justify-between gap-3 items-center cursor-pointer;
 
+  &:first-child{
+    @apply mt-auto
+  }
   
   &.anotherUser {
     @apply flex-row-reverse;
 
-    .message-card{
+    .message-card {
       @apply flex-row-reverse;
     }
   }
-  &:hover{
-    .options-menu-message{
+  &:hover {
+    .options-menu-message {
       @apply opacity-100;
     }
   }
 
   .message-card {
     @apply flex gap-2.5 items-center;
-
-
   }
-  .options-menu-message{
+  .options-menu-message {
     @apply opacity-0 self-start flex gap-1 items-center;
+  }
+}
+
+.status {
+  @apply absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full;
+
+  &.online {
+    @apply bg-green;
+  }
+
+  &.offline {
+    @apply bg-gray;
   }
 }

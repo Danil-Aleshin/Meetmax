@@ -1,14 +1,19 @@
 import { BellIcon, ExclamationIcon, TrashIcon, UserRemoveIcon } from '@heroicons/react/outline'
+import { serverTimestamp } from 'firebase/firestore'
 import React, { FC, memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { unfollow } from '../../../store/FollowersSlice'
 import { fetchRemovePost, removeComment, removeLike, sendLike, writeAComment } from '../../../store/PostsSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
+import useDate from '../../hooks/useDate'
 import useInput from '../../hooks/useInput'
-import { IPost, IUserInfo } from '../../types/data'
+import { IPost, IUserInfo, userID } from '../../types/data'
 import AddMessageForm from '../AddMessageForm'
 import ContentBlock from '../ContentBlock'
 import OptionsMenu from '../optionsMenu/OptionsMenu'
+import OptionsMenuItem from '../optionsMenu/OptionsMenuItem'
 import SoicalActivity from '../SoicalActivity'
+import UserImg from '../UserImg'
 import CommentCard from './CommentCard'
 import "./Post.scss"
 
@@ -33,12 +38,15 @@ const Post:FC<propsPost> = memo(({
   const [showComments, setShowComments] = useState(false)
   const [isLike, setIsLike] = useState(false)
 
-  const comment = useInput()
-
-  const {currentUser,allUsers} = useAppSelector(state => state.users)
+  
+  const {currentUser,currentUser:{userID},allUsers} = useAppSelector(state => state.users)
   
   const dispatch = useAppDispatch()
   
+  const postDate = useDate(date)
+
+
+
   useEffect(() => {
     allUsers.map(user => {
       if(user.userID === authorID){
@@ -49,31 +57,25 @@ const Post:FC<propsPost> = memo(({
 
   useEffect(() => {
     likes.map(like =>{
-      like === currentUser.userID ? setIsLike(true) : setIsLike(false)
+      like === userID ? setIsLike(true) : setIsLike(false)
     })
   }, [currentUser,likes])
   
   
-  useEffect(() => {
-    const ago = new Date(date - Date.now())
-    setTimeAgo(ago.getMinutes()) // does not work
-  }, [date])
-  
   const addComment = ()=>{
     const commentText = comment.value
-    const commentDate = Date.now().toString()
-    const commentAuthorID = currentUser.userID 
+    const commentAuthorID = userID
     const postAuthorID = authorID
     const postID = id
 
     if (commentText.length !== 0) {
       dispatch(writeAComment({
         commentAuthorID,
-        commentDate,
         commentText,
         postAuthorID,
         postID,
       }))
+      setShowComments(true)
     }
     comment.setValue("")
   }
@@ -81,7 +83,7 @@ const Post:FC<propsPost> = memo(({
   const likeFunc = () =>{
     const postAuthorID = authorID
     const postID = id
-    const userID = currentUser.userID
+
     if (isLike) {
       dispatch(removeLike({likes,postAuthorID,postID,userID}))
     }else{
@@ -90,13 +92,13 @@ const Post:FC<propsPost> = memo(({
   }
   const removePost = () =>{
     const postID = id
-    const userID = currentUser.userID
+
     dispatch(fetchRemovePost({postID,userID}))
   }
   
   const removeCommentFunc = () =>{
-    const commentAuthorID = currentUser.userID 
     const postAuthorID = authorID
+    const commentAuthorID = userID
     const postID = id
     dispatch(removeComment({
       commentAuthorID,
@@ -105,16 +107,34 @@ const Post:FC<propsPost> = memo(({
       postID,
     }))
   }
+ 
+  const unFollowFunc = () =>{
+    const followerID = id ? id : ""
+    // const docID = isFollowing?.docID ? isFollowing.docID : ""
+
+    // dispatch(unfollow({followerID,userID,docID}))
+  }
+  
+  const turnNotification = () =>{
+
+  }
+
+  const comment = useInput(addComment,"")
+
   return (
     <ContentBlock className="post">
       <>
       {/* header post */}
         <div className="flex justify-between items-center">
           <Link to={`/${authorID}`} className="author">
-            <img src={authorProfile?.profileImg} width={48} className="w-12 h-12 rounded-full" alt="" />
+            <UserImg
+                src={authorProfile?.profileImg}
+                width={"48"}
+                className="h-12"
+              />
             <div className="flex flex-col gap-0.5">
               <p>{authorProfile?.firstName + " " + authorProfile?.lastName}</p>
-              <span className='text-xs font-normal opacity-70 dark:text-superLightGray dark:opacity-100'>{timeAgo}min.</span>
+              <span className='text-xs font-normal opacity-70 dark:text-superLightGray dark:opacity-100'>{postDate.time}</span>
             </div>
           </Link>
             <OptionsMenu 
@@ -123,23 +143,22 @@ const Post:FC<propsPost> = memo(({
               className='top-16 -right-2'
             >
               <>
-                <li className='flex items-center gap-3 cursor-pointer'>
-                  <BellIcon className='w-5.5 text-blue'/>
-                  <p>Turn notification for this post</p>
-                </li>
-                <li className='flex items-center gap-3 cursor-pointer'>
-                  <ExclamationIcon className='w-5.5 text-blue'/>
-                  <p>Report this post</p>
-                </li>
-                <li className='flex items-center gap-3 cursor-pointer'>
-                  <UserRemoveIcon className='w-5.5 text-blue'/>
-                  <p>Unfollow</p>
-                </li>
+                <OptionsMenuItem 
+                  title='Turn notification for this post'
+                  Icon={BellIcon}
+                  onClick={turnNotification}
+                />
+                <OptionsMenuItem
+                  title='Unfollow'
+                  Icon={UserRemoveIcon}
+                  onClick={unFollowFunc}
+                />
                 {authorID === currentUser.userID &&
-                  <li onClick={()=>removePost()} className='flex  items-center gap-3 cursor-pointer'>
-                  <TrashIcon className='w-5.5 text-blue'/>
-                  <p>Remove this post</p>
-                  </li>
+                  <OptionsMenuItem
+                    title='Remove this post'
+                    Icon={TrashIcon}
+                    onClick={removePost}
+                  />
                 }
               </>
             </OptionsMenu>
@@ -175,12 +194,18 @@ const Post:FC<propsPost> = memo(({
           </ul>
         }
         <div className="add-comment">
-          <img src={currentUser.profileImg} alt="" width={38} className='rounded-full'/>
+          <UserImg 
+            src={currentUser.profileImg}
+            width={"38"}
+            className="h-9.5"
+          />
           <AddMessageForm
             onChange={comment.onChange}
             value={comment.value}
             onClick={addComment}
             placeHolder="Write a comment..."
+            onKeyDown={comment.onKeyDown}
+            setValue={comment.setValue}
           />
         </div>
       </>

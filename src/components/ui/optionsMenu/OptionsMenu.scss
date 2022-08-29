@@ -6,9 +6,13 @@
   }
 }
 .options-menu{
-  @apply transition-opacity duration-200 opacity-0 pointer-events-none;
+  @apply transition-opacity hidden;
   
   &.options-menu--active{
-    @apply transition-opacity duration-200 opacity-100;
+    @apply transition-opacity block;
+  }
+
+  .options-menu__item{
+    @apply flex items-center gap-3 cursor-pointer;
   }
 }

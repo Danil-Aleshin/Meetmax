@@ -1,12 +1,14 @@
 import { InformationCircleIcon, PhoneIcon, VideoCameraIcon } from '@heroicons/react/outline'
-import  { FC, useEffect, useState } from 'react'
+import  { FC, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { sendMessage } from '../../../store/ChatSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
+import useDate from '../../hooks/useDate'
 import useInput from '../../hooks/useInput'
-import { IChat, IMessage, IUserInfo, userID } from '../../types/data'
+import { IChatData, IMessage, IUserInfo, userID } from '../../types/data'
 import AddMessageForm from '../../ui/AddMessageForm'
 import ContentBlock from '../../ui/ContentBlock'
+import UserImg from '../../ui/UserImg'
 import MessageCard from './MessageCard'
 
 
@@ -30,11 +32,12 @@ const Chat:FC<propsChat> = ({
     profileImg:"",
     status:'offline',
   })
-  const messageInput = useInput()
+
+  // const date = useDate(new Date)
+
 
   const {allUsers,currentUser} = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
-
 
   useEffect(() => {
     allUsers.map(user => {
@@ -42,8 +45,10 @@ const Chat:FC<propsChat> = ({
         setUserInfo(user)
       }
     })
+    
   }, [allUsers,fromUserID])
   
+  const messListRef =useRef<any>(null)
 
   const sendMess = () =>{
     const message = messageInput.value
@@ -52,8 +57,11 @@ const Chat:FC<propsChat> = ({
     
     dispatch(sendMessage({companionID,message,userID}))
     messageInput.setValue("")
+
   }
-  // console.log(messages)
+
+  const messageInput = useInput(sendMess,"")
+  
   return (
     <ContentBlock className='w-full h-messageWindowHeight flex flex-col justify-between gap-10'>
       <>
@@ -61,7 +69,11 @@ const Chat:FC<propsChat> = ({
         <>
         <div className="flex justify-between items-center">
           <Link to={"/" + userInfo.userID} className="flex gap-3 items-center">
-            <img src={userInfo.profileImg} alt="" width={40} className="rounded-full" />
+            <UserImg
+              width="40"
+              className='h-10'
+              src={userInfo.profileImg}
+            />
             <div className="flex flex-col gap-1">
               <h2>{userInfo.firstName + " " + userInfo.lastName}</h2>
             </div>
@@ -72,22 +84,27 @@ const Chat:FC<propsChat> = ({
             <InformationCircleIcon className='w-5.5 shrink-0'/>
           </div>
         </div>
-        <ul className='flex flex-col h-full justify-end overflow-auto gap-3'>
+        <ul className='messages__list'ref={messListRef}>
           {messages?.map(item=>
           <MessageCard
-            key={item.date}
+            key={item.id}
             date={item.date}
             message={item.message}
             userInfo={userInfo}
+            id={item.id}
             fromUserID={item.fromUserID}
+            state={item.state}
+            
           />)}
         </ul>
         <AddMessageForm
           value={messageInput.value}
           onChange={messageInput.onChange}
+          onKeyDown={messageInput.onKeyDown}
           onClick={sendMess}
           className="border-t pt-5 border-t-superLightGray dark:border-t-inputBorderBlue"
           placeHolder='New message...'
+          setValue={messageInput.setValue}
         />
         </>
       }

@@ -5,11 +5,20 @@ interface useInputReturn{
   onChange:(e:React.ChangeEvent<HTMLInputElement> | 
     React.ChangeEvent<HTMLTextAreaElement>)=>void,
   setValue:React.Dispatch<React.SetStateAction<string>>
+  onKeyDown:React.KeyboardEventHandler<HTMLInputElement>,
 }
 
-const useInput = (initialState:string = ""):useInputReturn => {
+const useInput = (
+  onKeyDownFunc:()=>void,
+  initialState:string = ""
+  ):useInputReturn => {
 
   const [value,setValue] = useState(initialState)
+
+  const onKeyDown:React.KeyboardEventHandler<HTMLInputElement> = 
+  (e)=>{
+    e.key === "Enter" && onKeyDownFunc()
+  }
 
   const onChange = useCallback((e:React.ChangeEvent<HTMLInputElement> | 
     React.ChangeEvent<HTMLTextAreaElement>) =>{
@@ -21,6 +30,7 @@ const useInput = (initialState:string = ""):useInputReturn => {
     value,
     onChange,
     setValue,
+    onKeyDown,
   }
 }
 

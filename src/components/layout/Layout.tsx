@@ -3,7 +3,7 @@ import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
 import'./Layout.scss'
 import { useLocation } from 'react-router-dom'
-import { IChat, ICommunity, IUserData, IUserInfo, userID } from '../types/data'
+import { IChatData, ICommunity, IUserData, IUserInfo, userID } from '../types/data'
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
 import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../../firebaseConfig'
@@ -74,14 +74,14 @@ const Layout:FC<propsLayout> = ({children}) => {
         })
   
         const fetchChats = onSnapshot(query(collection(db, "chats",userID,"companion")), (querySnapshot) =>{
-          const chatsData:IChat[] = []
+          const chatsData:IChatData[] = []
           querySnapshot.forEach((doc) => {
-            chatsData.push(doc.data() as IChat);
+            chatsData.push(doc.data() as IChatData);
         });
           dispatch(getChats(chatsData))
           
         })
-
+        
         return () => {
           fetchFollowing()
           fetchFollowers()

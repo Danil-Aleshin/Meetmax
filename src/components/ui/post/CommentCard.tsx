@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/appRedux'
 import { IComment, IUserInfo } from '../../types/data'
 import OptionsMenu from '../optionsMenu/OptionsMenu'
+import OptionsMenuItem from '../optionsMenu/OptionsMenuItem'
+import UserImg from '../UserImg'
 
 interface propsCommentCard extends IComment{
+
   removeCommentFunc:()=>void
+
 }
 const CommentCard:FC<propsCommentCard> = memo(({
   authorID,
@@ -43,7 +47,11 @@ const CommentCard:FC<propsCommentCard> = memo(({
     <li className='flex justify-between'>
       <div className="flex gap-4">
         <Link to={`/${userInfo.userID}`}>
-          <img width={38} className="rounded-full" src={userInfo. profileImg} alt="" />
+          <UserImg
+            src={userInfo.profileImg}
+            width={"38"}
+            className="h-9.5"
+          />
         </Link>
         <div className="flex flex-col gap-1">
           <Link to={`/${userInfo.userID}`}>
@@ -56,16 +64,11 @@ const CommentCard:FC<propsCommentCard> = memo(({
       <div className="">
       <OptionsMenu isActive={optionsMenuActive} setIsActive={setOptionsMenuActive} className='-right-2'>
         <>
-          <li className='flex items-center gap-3 cursor-pointer'>
-            <ExclamationIcon className='shrink-0 w-5.5 text-blue'/>
-            <p>Report this comment</p>
-          </li>
-          {authorID === userID &&
-            <li onClick={removeCommentFunc} className='flex items-center gap-3 cursor-pointer'>
-              <TrashIcon className='shrink-0 w-5.5 text-blue'/>
-              <p>Remove this comment</p>
-            </li>
-          }
+          <OptionsMenuItem
+            onClick={removeCommentFunc}
+            title="Remove this comment"
+            Icon={TrashIcon}
+          />
         </>
       </OptionsMenu>
       </div>

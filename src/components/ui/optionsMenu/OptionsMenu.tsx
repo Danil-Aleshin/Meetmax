@@ -38,14 +38,14 @@ const OptionsMenu:FC<propsPostOptionsMenu> = ({className,isActive,setIsActive,ch
         }
         id="optionsMenuBtn"
       />
-    <div className={isActive 
-      ? "options-menu options-menu--active"
-      : "options-menu"
-    }>
-      <ul ref={optionsMenuRef} id="optionsMenu" className={'w-fit p-3.5 flex flex-col gap-4 shadow-2xl absolute bg-white dark:bg-lightBlack rounded-xl z-40 ' + className}>
+      <div className={isActive 
+        ? "options-menu options-menu--active"
+        : "options-menu"
+      }>
+        <ul ref={optionsMenuRef} id="optionsMenu" className={'w-fit p-3.5 flex flex-col gap-4 shadow-2xl absolute bg-white dark:bg-lightBlack rounded-xl z-40 ' + className}>
         {children}
-      </ul>
-    </div>
+        </ul>
+      </div>
     </div>
   )
 }

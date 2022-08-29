@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, deleteDoc, doc, FieldValue, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { IComment, IPost, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 
@@ -24,7 +24,6 @@ interface propsComment{
   postAuthorID:userID,
   commentAuthorID:userID,
   commentText:string,
-  commentDate:string,
 }
 interface propsSendLike{
   postID:string,
@@ -56,27 +55,22 @@ export const fetchCreatePost = createAsyncThunk<any,propsFetchCreatePost,{reject
   "posts/fetchCreatePost",
   async function({userID,text},{rejectWithValue}){
     const postID = Date.now().toString()
+
+    const newPost:IPost = {
+      id:postID,
+      authorID:userID,
+      comments:[],
+      text:text,
+      date:new Date,
+      likes:[],
+      share:0,
+      imgs:[]
+    }
+    
     try {
-      await setDoc(doc(db,"posts", userID,"data",postID),{
-        id:postID,
-        authorID:userID,
-        comments:[],
-        text:text,
-        date:Date.now(),
-        likes:[],
-        share:0,
-        imgs:[]
-      });
-      await setDoc(doc(db,"global","posts","data",postID),{
-        id:postID,
-        authorID:userID,
-        comments:[],
-        text:text,
-        date:Date.now(),
-        likes:[],
-        share:0,
-        imgs:[]
-      });
+      await setDoc(doc(db,"posts", userID,"data",postID),newPost);
+      await setDoc(doc(db,"global","posts","data",postID),newPost);
+
     } catch (error) {
       console.log(error)
       return rejectWithValue("error adding post")
@@ -99,11 +93,11 @@ export const fetchRemovePost = createAsyncThunk<any,propsFetchRemovePost,{reject
 
 export const writeAComment = createAsyncThunk<any,propsComment,{rejectValue:string}>(
   "posts/writeAComment",
-  async function({postAuthorID,commentAuthorID,commentDate,commentText,postID},{rejectWithValue}){
+  async function({postAuthorID,commentAuthorID,commentText,postID},{rejectWithValue}){
 
     const newComment:IComment = {
       authorID:commentAuthorID,
-      date:commentDate,
+      date:new Date,
       text:commentText,
     }
 

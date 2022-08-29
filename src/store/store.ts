@@ -3,12 +3,6 @@ import storage from 'redux-persist/lib/storage'
 import {
   persistStore,
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
 } from 'redux-persist'
 
 //Reducers
@@ -25,7 +19,7 @@ import PreloaderReducer from "./PreloaderSlide"
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["posts","users","preloader","friends","followers"]
+  blacklist: ["posts","users","preloader","friends","followers","chats"]
 }
 const rootReducer = combineReducers({
   auth:AuthenticationReducer,
@@ -46,9 +40,10 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      // serializableCheck: {
+      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      // },
+      serializableCheck: false
     }),
 })
 

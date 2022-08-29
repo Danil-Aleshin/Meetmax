@@ -26,6 +26,7 @@ module.exports = {
       green: "#40c691",
       pink: "#ff8585",
       opacityBlack: "rgba(0, 0, 0, 0.4)",
+      gray: "#a3a3a3"
     },
     extend: {
       spacing: {
@@ -35,6 +36,9 @@ module.exports = {
         6.5: "26px",
         "messageWindowHeight": " calc(100vh - 140px)",
         37: "148px",
+        9.5: "38px",
+        37.5: "150px",
+        39: "156px"
       },
       maxWidth: {
         "8x1": "1440px",

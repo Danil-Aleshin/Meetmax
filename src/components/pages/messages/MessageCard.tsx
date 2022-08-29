@@ -2,8 +2,9 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/outline'
 import { FC, memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/appRedux'
-
+import useDate from '../../hooks/useDate'
 import { IMessage, IUserInfo } from '../../types/data'
+import UserImg from '../../ui/UserImg'
 
 
 interface propsMessageCard extends IMessage{
@@ -19,7 +20,8 @@ const MessageCard:FC<propsMessageCard> = memo(({
 
   const {currentUser} = useAppSelector(state => state.users)
 
-  // {fromUserID === userInfo.userID ? "":""}
+  // const messageDate = useDate(date)
+  
 
   return (
     <li 
@@ -29,16 +31,17 @@ const MessageCard:FC<propsMessageCard> = memo(({
       }
     >
       <div className={"message-card"}>
-        <Link to={userInfo.userID}>
-          <img 
+        <Link to={userInfo.userID} className="flex-shrink-0">
+          <UserImg
+            width="36"
+            className='h-9'
             src={fromUserID === userInfo.userID 
               ? userInfo.profileImg 
               : currentUser.profileImg
             }
-            alt="" width={36} className="rounded-full" 
           />
         </Link>
-        <p className='p-2 bg-lightGray dark:bg-darkBlue rounded-lg'>
+        <p className='p-2 bg-lightGray dark:bg-darkBlue rounded-lg max-w-sm'>
           {message}
         </p>
       </div>

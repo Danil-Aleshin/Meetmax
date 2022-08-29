@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
-import { IChat, IMessage, userID} from "../components/types/data";
+import { arrayUnion, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { IChatData, IMessage, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 
 
 interface messagesState{
-  chats:IChat[],
+  chats:IChatData[],
   loading:boolean,
   status?:string,
   error:boolean
@@ -32,9 +32,11 @@ export const sendMessage = createAsyncThunk<any,propsSendMessage,{rejectValue:st
   "chats/sendMessage",
   async function({companionID,message,userID},{rejectWithValue}){
     const newMessage:IMessage = {
+      id:Date.now().toString(),
       fromUserID:userID,
       message,
-      date:Date.now().toString()
+      date:new Date,
+      state:"unread",
     }
     
     try {
@@ -72,7 +74,7 @@ const ChatSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    getChats(state,action:PayloadAction<IChat[]>){
+    getChats(state,action:PayloadAction<IChatData[]>){
       state.chats = action.payload
     }
   },
