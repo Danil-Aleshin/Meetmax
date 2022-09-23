@@ -1,8 +1,8 @@
-import { AtSymbolIcon, KeyIcon } from '@heroicons/react/outline'
+import { AtSymbolIcon, KeyIcon } from '@heroicons/react/24/outline'
 import { FC, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { fetchAuthentication } from '../../../store/AuthenticationSlice'
+import { fetchAuthentication, resetError } from '../../../store/AuthenticationSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { authValue } from '../../types/data'
 import AuthPageContainer from '../../ui/AuthPageContainer'
@@ -12,7 +12,7 @@ import InputAuth from '../../ui/InputAuth'
 
 const Authentication:FC = () => {
 
-  const {isAuth} = useAppSelector(state => state.auth)
+  const {isAuth,error,status} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const {
     register,
@@ -30,7 +30,10 @@ const Authentication:FC = () => {
     }
   }, [isAuth])
   
-
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
+  
   const authentication:SubmitHandler<authValue> = (data) =>{
     const password = data.password
     const email = data.email
@@ -67,11 +70,11 @@ const Authentication:FC = () => {
           regExp={/(?=^.{1,}$)/}
           regExpError={"Enter valid password"}
         />
-        
+        {error && <p className='text-red text-sm'>Wrong login or password</p>}
         <Button title='Sign in' className='w-full'/>
         <div className="flex gap-4">
           <p>No account?</p>
-          <Link to="/registration" className='text-lightBlue'>Sign up</Link>
+          <Link to="/registration" className='text-lightBlue dark:text-lightBlue'>Sign up</Link>
         </div>
       </form>
     </AuthPageContainer>

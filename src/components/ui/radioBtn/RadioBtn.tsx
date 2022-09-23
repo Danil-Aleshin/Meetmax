@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC,memo } from 'react'
 import { TypeSetState } from '../../types/data'
 import './RadioBtn.scss'
 
@@ -10,7 +10,7 @@ interface propsRadioBtn{
   setValue:TypeSetState<string>
   defCheck:boolean
 }
-const RadioBtn:FC<propsRadioBtn> = ({id,name,title,value,setValue,defCheck}) => {
+const RadioBtn:FC<propsRadioBtn> = memo(({id,name,title,value,setValue,defCheck}) => {
   return (
     <div className="relative">
       <input defaultChecked={defCheck} onChange={()=>setValue(value)} className='input-radio' type="radio" value={value} name={name} id={id} />
@@ -19,6 +19,6 @@ const RadioBtn:FC<propsRadioBtn> = ({id,name,title,value,setValue,defCheck}) => 
       </label>
   </div>
   )
-}
+})
 
 export default RadioBtn

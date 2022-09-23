@@ -1,0 +1,31 @@
+.nav-settings__link {
+  @apply flex gap-3 border-b border-b-superLightGray dark:border-b-darkBlue py-2 items-center cursor-pointer;
+
+  &.active--link {
+    .settings__title{
+      @apply font-bold;
+
+      &::before,
+      &::after{
+        @apply opacity-100
+      }
+    }
+  }
+  .settings__icon {
+    @apply w-5.5 text-blue dark:text-superLightGray;
+  }
+  .settings__title {
+    @apply relative;
+    &::before,
+    &::after {
+      @apply absolute content-[""] w-0.6 rounded-sm h-3 bg-blue -right-5 top-0 opacity-0 transition-opacity;
+    }
+
+    &::after {
+      @apply -rotate-45 top-0.6 ;
+    }
+    &::before {
+      @apply rotate-45 top-2.5;
+    }
+  }
+}

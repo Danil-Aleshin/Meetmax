@@ -10,7 +10,7 @@
 .new-img{
   @apply transition-opacity duration-300 cursor-pointer absolute top-0 left-0 w-full h-full bg-opacityBlack opacity-0 rounded-full;
   &::before,&::after{
-    @apply absolute content-[""] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-1.5 h-1/4 bg-white rounded-md;
+    @apply absolute content-[""] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-1/5 bg-white rounded-md;
   }
   &::after{
     @apply rotate-90;

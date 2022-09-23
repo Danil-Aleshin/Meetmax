@@ -1,47 +1,51 @@
 import { collection, onSnapshot, query } from 'firebase/firestore'
-import {FC, useEffect} from 'react'
-import { db } from '../../../firebaseConfig'
-import { getPosts } from '../../../store/PostsSlice'
+import {FC, useEffect, useState} from 'react'
+import { auth, db } from '../../../firebaseConfig'
+import { deleteFile } from '../../../store/UploadFileSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { IPost } from '../../types/data'
 import CreatePostForm from '../../ui/CreatePostForm'
 import Post from '../../ui/post/Post'
 
+
 const Home:FC = () => {
-  
+  const [posts, setPosts] = useState<IPost[]>([])
   const dispatch = useAppDispatch()
-  const posts = useAppSelector(state => state.posts.posts)
+  
+  const {currentUserFollowing} = useAppSelector(state => state.followers)
+  const {allUsers,currentUser} = useAppSelector(state => state.users)
+
 
   useEffect(() => {
-    const q = query(collection(db, "global", "posts","data"));
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) =>{
-      const postsData:IPost[] = []
-      querySnapshot.forEach((doc) => {
-        postsData.push(doc.data() as IPost);
-    });
-      dispatch(getPosts(postsData))
+    onSnapshot(query(collection(db, "global", "posts","data")),
+    (querySnapshot) =>{
+      let postsData:IPost[] = []
+      querySnapshot.forEach((doc
+        ) => {
+        postsData.push(doc.data() as IPost)
+      });
+      allUsers.map(user => {
+        postsData = postsData.map(post=>
+          user.userID === post.authorID
+            ? {...post, userInfo:user}
+            : post
+        )
+      })
+      postsData.sort((a,b) => a.date > b.date ? -1 : 1)
+      setPosts(postsData)
     })
-    
-    return () => unsubscribe()
-}, [])
+
+  }, [allUsers,currentUserFollowing])
 
 
   return (
-    <div className='w-129 flex flex-col gap-7'>
+    <div className='w-full flex flex-col gap-7'>
       <CreatePostForm/>
-      {posts.map(post =>
+      {posts.map(post => 
         <Post
           key={post.id}
-          authorID={post.authorID}
-          comments={post.comments}
-          date={post.date}
-          id={post.id}
-          likes={post.likes}
-          share={post.share}
-          text={post.text}
-          imgs={post.imgs}
-      />
+          post={post}
+        />
       )}
     </div>
   )

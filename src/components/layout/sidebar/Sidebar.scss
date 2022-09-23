@@ -1,5 +1,5 @@
 .sidebar {
-  @apply w-56 p-3 bg-white dark:bg-lightBlack;
+  @apply w-56 p-3 bg-white dark:bg-lightBlack transition-colors;
   grid-area: sidebar;
 }
 .nav__list {

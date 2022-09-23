@@ -1,4 +1,4 @@
-import { LogoutIcon, SearchIcon } from '@heroicons/react/outline'
+import { ArrowLeftOnRectangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import {FC, useEffect, useRef, useState} from 'react'
 import { Link } from 'react-router-dom'
 import { fetchSignOut } from '../../../store/AuthenticationSlice'
@@ -15,7 +15,6 @@ const Header:FC = () => {
   const [optionsMenuActive, setOptionsMenuActive] = useState(false)
 
   const {currentUser} = useAppSelector(state => state.users)
-  const {userID} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
 
 
@@ -43,21 +42,18 @@ const Header:FC = () => {
     }
   }
   
-  const plug = () =>{
-
-  }
-  const search = useInput(plug,"")
+  const search = useInput("")
 
   
 
   return (
     <header className='header'>
-      <div className="flex gap-16 items-center">
+      <div className="flex gap-16 items-center w-full">
         <MainLogo/>
         <InputText 
-          Icon={SearchIcon}
+          Icon={MagnifyingGlassIcon}
           placeholder='Search for something here...'
-          className='w-150 border px-11 border-superLightGray dark:bg-lightBlack'
+          className='w-full border px-11 border-superLightGray dark:bg-lightBlack'
           value={search.value}
           onChange={search.onChange}
           onKeyDown={search.onKeyDown}
@@ -71,7 +67,7 @@ const Header:FC = () => {
       >
         <div>
         <AuthorImg
-          src={currentUser.profileImg}
+          src={currentUser.profileImg.link}
           width={"40"}
           className="h-10"
         />
@@ -88,7 +84,7 @@ const Header:FC = () => {
                 className='flex gap-2 items-center'
               >
                 <AuthorImg
-                  src={currentUser.profileImg}
+                  src={currentUser.profileImg.link}
                   width={"40"}
                   className="h-10"
                 />
@@ -96,7 +92,7 @@ const Header:FC = () => {
               </Link>
             </li>
             <li onClick={()=>logout()} className='flex gap-2 items-center'>
-              <LogoutIcon className='w-5.5 text-blue'/>
+              <ArrowLeftOnRectangleIcon className='w-5.5 text-blue'/>
               <p>Logout</p>
             </li>
           </ul>

@@ -17,6 +17,7 @@ module.exports = {
       lightBlack: "#191c21",
       white: "#ffffff",
       blue: "#4e5e78",
+      test: "#6f7e96",
       lightBlue: "#377dfc",
       "lightBlue-2": "#377cfc27",
       black: "#000",
@@ -25,20 +26,29 @@ module.exports = {
       red: "#ff0000",
       green: "#40c691",
       pink: "#ff8585",
-      opacityBlack: "rgba(0, 0, 0, 0.4)",
-      gray: "#a3a3a3"
+      opacityBlack: "rgba(0, 0, 0, 0.3)",
+      gray: "#a3a3a3",
+      yellow: "#ffe600",
     },
     extend: {
       spacing: {
+        0.6: "3px",
         1.5: "6px",
+        3.3: "12.5px",
         4.5: "18px",
-        5.5: "21.5px",
+      5.5: "21.5px",
         6.5: "26px",
-        "messageWindowHeight": " calc(100vh - 140px)",
+        "mainContentHeight": " calc(100vh - 90px)",
         37: "148px",
+        8.5: "34px",
         9.5: "38px",
+        15: "60px",
         37.5: "150px",
-        39: "156px"
+        39: "156px",
+        67.5: "269px"
+      },
+      zIndex:{
+
       },
       maxWidth: {
         "8x1": "1440px",

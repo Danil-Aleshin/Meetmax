@@ -1,15 +1,18 @@
 .container {
-  @apply max-w-8x1 px-3 mx-auto;
+  @apply max-w-4xl px-3 mx-auto;
 }
 .mainContent {
-  @apply p-6 rounded-2xl w-full;
+  @apply p-6 rounded-2xl overflow-y-auto h-mainContentHeight;
   grid-area: main;
+  &::-webkit-scrollbar {
+    @apply hidden;
+  }
 }
 .table {
   width: 100%;
   display: grid;
-  grid-template-columns: 224px minmax(890px,900px);
+  grid-template-columns: 230px 1fr;
   grid-template-areas:
-    'header header header'
-    'sidebar main friends';
+    'header header'
+    'sidebar main';
 }

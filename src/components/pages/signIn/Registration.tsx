@@ -1,8 +1,8 @@
-import { AtSymbolIcon, LockClosedIcon, PhoneIcon, UserIcon } from '@heroicons/react/outline';
+import { AtSymbolIcon, LockClosedIcon, PhoneIcon, UserIcon } from '@heroicons/react/24/outline';
 import  { FC, useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchRegistration } from '../../../store/AuthenticationSlice';
+import { fetchRegistration, resetError } from '../../../store/AuthenticationSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux';
 import { authValue } from '../../types/data';
 import AuthPageContainer from '../../ui/AuthPageContainer';
@@ -29,7 +29,10 @@ const Registration:FC = () => {
   const dispatch = useAppDispatch()
   const {status} = useAppSelector(state => state.auth)
 
-  // console.log(status)
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
+  
 
   const navigate = useNavigate()
 
@@ -39,9 +42,8 @@ const Registration:FC = () => {
     const firstName = data.firstName
     const lastName = data.lastName
     const phoneNumber = data.phoneNumber
-    const dateOfBirthday = "10.12.2000"
 
-    dispatch(fetchRegistration({email,firstName,gender,lastName,password,phoneNumber, dateOfBirthday}))
+    dispatch(fetchRegistration({email,firstName,gender,lastName,password,phoneNumber}))
     reset()
     navigate("/login")
   }
@@ -96,7 +98,7 @@ const Registration:FC = () => {
           error={errors.password}
           required="Password is require field!"
           regExp={/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/g}
-          regExpError={"[0-9a-zA-Z!@#$%^&*], > 6 characters "}
+          regExpError={"The password must contain [0-9]-[a-z]-[A-Z]-[!@#$%^&*], > 6 characters "}
          />
         <div className="h-11 px-10 border-2 border-superLightGray dark:border-inputBorderBlue rounded-lg w-fit flex gap-10 items-center">
           <RadioBtn defCheck={true} setValue={setGender} id='genderMale' name='gender' title='Male' value='male'/>
@@ -105,7 +107,7 @@ const Registration:FC = () => {
         <Button title='Sign up' className='w-full'/>
         <div className="flex gap-4">
           <p>Already have an account?</p>
-          <Link to="/login" className='text-lightBlue'>Sign in</Link>
+          <Link to="/login" className='text-lightBlue dark:text-lightBlue'>Sign in</Link>
         </div>
 
       </form>

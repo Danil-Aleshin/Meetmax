@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore";
-import { ICommunity, userID } from "../components/types/data"
+import { ICommunity, IProfile, userID } from "../components/types/data"
 import { db } from "../firebaseConfig";
 
 
 interface followersState{
-  currentUserFollowers:ICommunity[],
-  currentUserFollowing:ICommunity[],
+  currentUserFollowers:IProfile[],
+  currentUserFollowing:IProfile[],
   loading:boolean,
   error:boolean,
   status?:string,
@@ -18,7 +18,6 @@ interface propsFollow{
 interface propsUnFollow{
   userID:userID,
   followerID:userID,
-  docID:string,
 }
 const initialState:followersState = {
   currentUserFollowers:[],
@@ -31,15 +30,13 @@ const initialState:followersState = {
 export const follow = createAsyncThunk<any,propsFollow,{rejectValue:string}>(
   "followers/follow",
   async function({userID,followerID},{rejectWithValue}){
-    const id = Date.now().toString()
+
     try {
-      await setDoc(doc(db,"following", userID,"data",id),{
+      await setDoc(doc(db,"following", userID,"data",followerID),{
         userID:followerID,
-        docID:id
       });
-      await setDoc(doc(db,"followers",followerID,"data",id),{
+      await setDoc(doc(db,"followers",followerID,"data",userID),{
         userID:userID,
-        docID:id
       });
     } catch (error) {
       console.log(error)
@@ -50,11 +47,11 @@ export const follow = createAsyncThunk<any,propsFollow,{rejectValue:string}>(
 
 export const unfollow = createAsyncThunk<any,propsUnFollow,{rejectValue:string}>(
   "followers/unfollow",
-  async function({userID,followerID,docID},{rejectWithValue}){
+  async function({userID,followerID},{rejectWithValue}){
     const id = Date.now().toString()
     try {
-      await deleteDoc(doc(db,"following", userID,"data",docID))
-      await deleteDoc(doc(db,"followers",followerID,"data",docID))
+      await deleteDoc(doc(db,"following", userID,"data",followerID))
+      await deleteDoc(doc(db,"followers",followerID,"data",userID))
 
     } catch (error) {
       console.log(error)
@@ -67,10 +64,10 @@ const FollowersSlice = createSlice({
   name: "followers",
   initialState,
   reducers: {
-    getFollowers(state,action:PayloadAction<ICommunity[]>){
+    getFollowers(state,action:PayloadAction<IProfile[]>){
       state.currentUserFollowers = action.payload
     },
-    getFollowing(state,action:PayloadAction<ICommunity[]>){
+    getFollowing(state,action:PayloadAction<IProfile[]>){
       state.currentUserFollowing = action.payload
     }
   },
@@ -87,6 +84,22 @@ const FollowersSlice = createSlice({
         state.error = false
       })
       .addCase(follow.rejected,(state,action)=>{
+        state.loading = true
+        state.status = action.payload
+        state.error = true
+      })
+      //unfollow
+      .addCase(unfollow.pending,(state)=>{
+        state.loading = true
+        state.status = "unfollow loading"
+        state.error = false
+      })
+      .addCase(unfollow.fulfilled,(state)=>{
+        state.loading = false
+        state.status = "unfollow fulfilled"
+        state.error = false
+      })
+      .addCase(unfollow.rejected,(state,action)=>{
         state.loading = true
         state.status = action.payload
         state.error = true

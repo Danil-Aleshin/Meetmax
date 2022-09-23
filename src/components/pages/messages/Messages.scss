@@ -1,13 +1,13 @@
 .messages__list {
-  @apply flex flex-col h-full overflow-y-auto gap-3;
+  @apply flex flex-col h-full overflow-y-auto gap-3 pr-1;
 
-  &:hover{
+  &:hover {
     &::-webkit-scrollbar {
       @apply block;
     }
   }
   &::-webkit-scrollbar {
-    @apply w-1 hidden;
+    @apply w-1;
   }
 
   &::-webkit-scrollbar-track {
@@ -22,10 +22,10 @@
 .test {
   @apply w-full flex justify-between gap-3 items-center cursor-pointer;
 
-  &:first-child{
-    @apply mt-auto
+  &:first-child {
+    @apply mt-auto;
   }
-  
+
   &.anotherUser {
     @apply flex-row-reverse;
 
@@ -56,5 +56,24 @@
 
   &.offline {
     @apply bg-gray;
+  }
+}
+
+.about-user-menu {
+  @apply w-64 h-full transition-all duration-300 bg-white dark:bg-darkBlue absolute -right-1/2 top-0 rounded-l-xl;
+  &.about-user-menu--active{
+    @apply right-0
+  }
+  
+  &::-webkit-scrollbar {
+    @apply w-1;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-superLightGray;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply rounded-3xl border-gray bg-gray;
   }
 }

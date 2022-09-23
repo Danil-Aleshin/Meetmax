@@ -8,17 +8,21 @@ body {
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 @layer components {
+  .icon {
+    @apply text-blue dark:text-superLightGray;
+  }
 }
 
 @layer base {
   body {
-    @apply bg-white dark:bg-lightBlack;
+    @apply bg-white dark:bg-lightBlack transition-colors;
   }
   a,
   p,
@@ -32,13 +36,39 @@ code {
   h5,
   button,
   input {
-    @apply text-blue font-semibold dark:text-white;
+    @apply text-blue font-semibold dark:text-white transition-colors;
   }
   main,
   input {
-    @apply bg-lightGray dark:bg-darkBlue;
+    @apply bg-lightGray dark:bg-darkBlue transition-colors;
   }
   ul {
     @apply list-none;
   }
+}
+.swiper-button-prev {
+  color: #4e5e78 !important;
+  background: white;
+  border-radius: 50%;
+  height: 18.5px !important;
+  width: 18.5px !important;
+  left: 5px !important;
+}
+.swiper-button-next {
+  color: #4e5e78 !important;
+  background: white;
+  border-radius: 50%;
+  height: 19px !important;
+  width: 19px !important;
+  right: 5px !important;
+}
+.swiper-button-next::after {
+  font-size: 12px !important;
+  margin-left: 1.5px;
+  margin-top: 1px;
+}
+.swiper-button-prev::after {
+  font-size: 12px !important;
+  margin-right: 1.5px;
+  margin-top: 1px ;
 }

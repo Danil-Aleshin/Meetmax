@@ -1,14 +1,15 @@
-import { CakeIcon, DeviceMobileIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/outline'
+import { CakeIcon, DevicePhoneMobileIcon, MapPinIcon, UsersIcon } from '@heroicons/react/24/outline'
+import { Timestamp } from 'firebase/firestore'
 import React, { FC, memo } from 'react'
 import { Link } from 'react-router-dom'
+import useDate from '../../hooks/useDate'
 import ContentBlock from '../../ui/ContentBlock'
 
 interface propsIntro{
-  dateOfBirthday?:string,
+  dateOfBirthday?:Timestamp,
   followers:number,
   following:number,
   location?:string,
-  phoneNumber?:number,
   friends:number,
 }
 
@@ -17,29 +18,24 @@ const Intro:FC<propsIntro> = memo(({
   followers,
   following,
   location,
-  phoneNumber,
   friends
 }) => {
+
+  const date = useDate(dateOfBirthday)
+
   return (
-    <ContentBlock className='h-fit'>
+    <div className='h-fit'>
       <div className='flex flex-col gap-4'>
-        <h3 className='uppercase'>intro</h3>
         <ul className='flex flex-col gap-2'>
           {dateOfBirthday &&
             <li className='flex gap-5 items-center'>
               <CakeIcon className='w-5'/>
-              <p>{dateOfBirthday}</p>
-            </li>
-          }
-          {phoneNumber &&
-            <li className='flex gap-5 items-center'>
-              <DeviceMobileIcon className='w-5'/>
-              <p>{phoneNumber}</p>
+              <p>{date.date}</p>
             </li>
           }
           {location &&
             <li className='flex gap-5 items-center'>
-              <LocationMarkerIcon className='w-5'/>
+              <MapPinIcon className='w-5'/>
               <p>{location}</p>
             </li>
           }
@@ -54,11 +50,11 @@ const Intro:FC<propsIntro> = memo(({
             <p>{following} Following</p>
           </li>
         </ul>
-        <Link to="/" className='py-2 px-12 bg-lightGray dark:bg-darkBlue rounded-lg text-center'>
+        {/* <Link to="/settings/edit-profile" className='py-2 px-12 bg-lightGray dark:bg-darkBlue rounded-lg text-center'>
           Edit Details
-        </Link>
+        </Link> */}
       </div>
-    </ContentBlock>
+    </div>
   )
 })
 

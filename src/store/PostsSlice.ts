@@ -1,29 +1,27 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { arrayUnion, deleteDoc, doc, FieldValue, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { IComment, IPost, userID} from "../components/types/data";
+import { IComment, ICommunity, IPost, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 
 
 interface CreatePostState{
-  posts:IPost[],
   loading:boolean,
   status?:string,
   error:boolean,
 }
 interface propsFetchCreatePost{
-  userID:string,
-  text:string,
+  newPost:IPost,
+  userID:userID
 }
 interface propsFetchRemovePost{
   userID:string,
   postID:string,
-  
+
 }
 interface propsComment{
-  postID:string,
+  newComment:IComment,
   postAuthorID:userID,
-  commentAuthorID:userID,
-  commentText:string,
+  postID:string
 }
 interface propsSendLike{
   postID:string,
@@ -43,9 +41,9 @@ interface propsRemoveComment{
   postID:string,
   comments:IComment[],
 }
+
 //state
 const initialState:CreatePostState = {
-  posts:[],
   loading:false,
   status:"",
   error:false
@@ -53,23 +51,11 @@ const initialState:CreatePostState = {
 
 export const fetchCreatePost = createAsyncThunk<any,propsFetchCreatePost,{rejectValue:string}>(
   "posts/fetchCreatePost",
-  async function({userID,text},{rejectWithValue}){
-    const postID = Date.now().toString()
-
-    const newPost:IPost = {
-      id:postID,
-      authorID:userID,
-      comments:[],
-      text:text,
-      date:new Date,
-      likes:[],
-      share:0,
-      imgs:[]
-    }
+  async function({userID,newPost},{rejectWithValue}){
     
     try {
-      await setDoc(doc(db,"posts", userID,"data",postID),newPost);
-      await setDoc(doc(db,"global","posts","data",postID),newPost);
+      await setDoc(doc(db,"posts", userID,"data",newPost.id),newPost);
+      await setDoc(doc(db,"global","posts","data",newPost.id),newPost);
 
     } catch (error) {
       console.log(error)
@@ -77,6 +63,7 @@ export const fetchCreatePost = createAsyncThunk<any,propsFetchCreatePost,{reject
     }
   }
 )
+
 
 export const fetchRemovePost = createAsyncThunk<any,propsFetchRemovePost,{rejectValue:string}>(
   "posts/fetchRemovePost",
@@ -93,13 +80,7 @@ export const fetchRemovePost = createAsyncThunk<any,propsFetchRemovePost,{reject
 
 export const writeAComment = createAsyncThunk<any,propsComment,{rejectValue:string}>(
   "posts/writeAComment",
-  async function({postAuthorID,commentAuthorID,commentText,postID},{rejectWithValue}){
-
-    const newComment:IComment = {
-      authorID:commentAuthorID,
-      date:new Date,
-      text:commentText,
-    }
+  async function({newComment,postAuthorID,postID},{rejectWithValue}){
 
     try {
       await updateDoc(doc(db,"posts", postAuthorID,"data",postID),{
@@ -172,11 +153,7 @@ export const removeLike = createAsyncThunk<any,propsRemoveLike,{rejectValue:stri
 const PostsSlice = createSlice({
   name: "posts",
   initialState,
-  reducers: {
-    getPosts(state,action:PayloadAction<IPost[]>){
-      state.posts = action.payload.reverse()
-    }
-  },
+  reducers: {},
   extraReducers:(builder)=>{
     builder
       .addCase(fetchCreatePost.pending,(state)=>{
@@ -212,6 +189,6 @@ const PostsSlice = createSlice({
 
 })
 
-export const {getPosts} = PostsSlice.actions
+export const {} = PostsSlice.actions
 
 export default PostsSlice.reducer

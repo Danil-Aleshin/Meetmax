@@ -1,4 +1,4 @@
-import { BellIcon, ChatAlt2Icon, CogIcon, GlobeIcon, UserGroupIcon, ViewGridIcon } from "@heroicons/react/outline";
+import { ChatBubbleOvalLeftIcon, Cog6ToothIcon, UserGroupIcon, RectangleGroupIcon, UsersIcon } from "@heroicons/react/24/outline";
 
 interface INavOptions{
   icon:any,
@@ -8,14 +8,19 @@ interface INavOptions{
 
 export const navOptions:INavOptions[] = [
   {
-    icon:ViewGridIcon,
+    icon:RectangleGroupIcon,
     title:"Feed",
     path:"/"
   },
   {
-    icon:ChatAlt2Icon,
+    icon:ChatBubbleOvalLeftIcon,
     title:"Messages",
     path:"/messages"
+  },
+  {
+    icon:UsersIcon,
+    title:"Friends",
+    path:"/friends",
   },
   {
     icon:UserGroupIcon,
@@ -23,17 +28,7 @@ export const navOptions:INavOptions[] = [
     path:"/my-community"
   },
   {
-    icon:BellIcon,
-    title:"Notification",
-    path:"/notification"
-  },
-  {
-    icon:GlobeIcon,
-    title:"Explore",
-    path:"/explore"
-  },
-  {
-    icon:CogIcon,
+    icon:Cog6ToothIcon,
     title:"Settings",
     path:"/settings"
   },

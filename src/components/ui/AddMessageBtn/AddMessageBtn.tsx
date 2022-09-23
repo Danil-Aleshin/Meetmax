@@ -1,4 +1,4 @@
-import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import React, { FC, memo } from 'react'
 import './AddMessageBtn.scss'
 interface propsAddMessageBtn{

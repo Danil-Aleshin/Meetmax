@@ -1,15 +1,17 @@
-import { serverTimestamp } from "firebase/firestore"
-import { useEffect, useState } from "react"
+  import { useEffect, useState } from "react"
 
 const useDate = (d:any) => { // type for method toDate() === "Timestamp" in firebase
 
   const [day, setDay] = useState("")
   const [month, setMonth] = useState("")
+  const [mouthName, setMouthName] = useState("")
   const [year, setYear] = useState("")
   const [hours, setHours] = useState("")
   const [minutes, setMinutes] = useState("")
   const [date, setDate] = useState("")
   const [time, setTime] = useState("")
+
+  const [dateAgo,setDateAgo] = useState("")
 
   useEffect(() => {
     const monthWords = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -23,13 +25,17 @@ const useDate = (d:any) => { // type for method toDate() === "Timestamp" in fire
 
     setDay(dy)
     setMonth(m)
+    setMouthName(monthWords[monthIndex])
     setYear(y)
     setHours(h)
     setMinutes(min)
 
-    setDate(`${dy}.${monthWords[monthIndex]}.${y}`)
+    setDate(`${dy} ${monthWords[monthIndex]} ${y}`)
     setTime(`${h}:${min}`)
   }, [d])
+
+  // const dateNow = new Date
+  // console.log(dateNow)
   
   return {
     day,month,year,hours,minutes,date,time

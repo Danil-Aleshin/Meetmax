@@ -1,16 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import { useInputReturn } from '../types/data'
 
-interface useInputReturn{
-  value:string,
-  onChange:(e:React.ChangeEvent<HTMLInputElement> | 
-    React.ChangeEvent<HTMLTextAreaElement>)=>void,
-  setValue:React.Dispatch<React.SetStateAction<string>>
-  onKeyDown:React.KeyboardEventHandler<HTMLInputElement>,
-}
 
 const useInput = (
-  onKeyDownFunc:()=>void,
-  initialState:string = ""
+  initialState:string = "",
+  onKeyDownFunc:()=>void = () => {},
   ):useInputReturn => {
 
   const [value,setValue] = useState(initialState)

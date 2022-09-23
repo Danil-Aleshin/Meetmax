@@ -14,8 +14,8 @@ const OptionsMenuItem:FC<propsOptionsMenuItem> = ({
 }) => {
   return (
     <li onClick={onClick} className='options-menu__item'>
-      {Icon && <Icon className='w-5.5 text-blue'/>}
-      <p>{title}</p>
+      {Icon && <Icon className='w-5.5 text-blue flex-shrink-0' />}
+      <p className='whitespace-nowrap'>{title}</p>
     </li>
   )
 }

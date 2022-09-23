@@ -1,49 +1,46 @@
-import { collection, doc, onSnapshot, query } from 'firebase/firestore'
+import { collection, onSnapshot, query } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { db,storage } from '../../../firebaseConfig'
+import { db } from '../../../firebaseConfig'
 import { follow, unfollow } from '../../../store/FollowersSlice'
-import { addToFriends } from '../../../store/FriendsSlice'
+import { addToFriends, friendRequest, removeFriendRequest, removeFromFriends } from '../../../store/FriendsSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
-import { ICommunity, IPost, IUserInfo, userID } from '../../types/data'
+import { ICommunity, IPost, IUserInfo } from '../../types/data'
 import Button from '../../ui/Button'
 import CreatePostForm from '../../ui/CreatePostForm'
 import Post from '../../ui/post/Post' 
 import Intro from './Intro'
-import {ref,uploadBytesResumable,getDownloadURL} from "firebase/storage"
 import './Profile.scss'
-import { uploadImg } from '../../../store/UsersSlice'
+import { changeProfileImg } from '../../../store/EditProfileSlice'
 import { startAChat } from '../../../store/ChatSlice'
 import UserImg from '../../ui/UserImg'
+import { ChatBubbleOvalLeftEllipsisIcon, UserPlusIcon, UserMinusIcon, EnvelopeIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
+import ContentBlock from '../../ui/ContentBlock'
+
 
 
 const Profile:FC = () => {
-  const [userInfo, setUserInfo] = useState<IUserInfo>({
-    userID:"",
-    email:"",
-    firstName:"",
-    gender:"",
-    lastName:"",
-    phoneNumber:0,
-    profileImg:"",
-    status:'offline',
-  })
+  const [userInfo, setUserInfo] = useState<IUserInfo>()
 
   const [userPosts, setUserPosts] = useState<IPost[]>([])
   const [userFriends, setUserFriends] = useState<ICommunity[]>([])
   const [userFollowers, setUserFollowers] = useState<ICommunity[]>([])
   const [userFollowing, setUserFollowing] = useState<ICommunity[]>([])
-  const [newImg, setNewImg] = useState<any>()
-  const [isFollowing, setIsFollowing] = useState<any>()
+  const [isFollowing, setIsFollowing] = useState<ICommunity>()
+  const [isFriend, setIsFriend] = useState(false)
+  const [isFriendReq, setIsFriendReq] = useState(false)
+  const [isMyFriendReq, setIsMyFriendReq] = useState(false)
 
   const {id} = useParams()
-  console.log(isFollowing)
   const {userID} = useAppSelector(state => state.auth)
-  const {allUsers} = useAppSelector(state => state.users)
-  const {currentUserFollowing} = useAppSelector(state => state.followers)
+  const {allUsers,currentUser} = useAppSelector(state => state.users)
+  const {currentUserFollowing,loading,status} = useAppSelector(state => state.followers)
+  const {currentUserFriends,currentUserFriendRequests,myFriendRequests} = useAppSelector(state => state.friends)
+
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
+
   useEffect(() => {
 
     const uid = id ? id : ""
@@ -53,15 +50,21 @@ const Profile:FC = () => {
       }
     })
 
-    const q = query(collection(db, "posts", uid,"data"));
-    const fetchPosts = onSnapshot(q, (querySnapshot) =>{
-      const postsData:IPost[] = []
+    const fetchPosts = onSnapshot(collection(db, "posts", uid,"data"), (querySnapshot) =>{
+      let postsData:IPost[] = []
       querySnapshot.forEach((doc) => {
         postsData.push(doc.data() as IPost);
     });
+      allUsers.map(user => {
+        postsData = postsData.map(post=>
+          user.userID === post.authorID
+            ? {...post, userInfo:user}
+            : post
+        )
+      })
+      postsData.sort((a,b) => a.date > b.date ? -1 : 1)
       setUserPosts(postsData)
     })
-
 
     const fetchFollowers = onSnapshot(query(collection(db, "followers",uid,"data")), (querySnapshot) =>{
       const followersData:ICommunity[] = []
@@ -95,78 +98,101 @@ const Profile:FC = () => {
     }
   }, [allUsers,id])
 
+  
+
+  const uploadImg = (e:any) =>{
+    const newImg = e.target.files[0]
+    newImg.path = `profileImages/${userID}`
+    newImg.link = ""
+    const currentImg = currentUser.profileImg
+    dispatch(changeProfileImg({newImg,userID,currentImg}))
+  }
+
   useEffect(() => {
-    const uploadImgFunc = () =>{
-      const name = new Date().getTime().toString() + newImg?.name
-      const storageRef = ref(storage,name)
+    setIsFollowing(undefined)
+    currentUserFollowing.map(following => 
+      following.userID === id && setIsFollowing(following)
+    )
+  }, [id,currentUserFollowing,userFollowers])
 
-      const uploadTask = uploadBytesResumable(storageRef, newImg);
 
-  uploadTask.on('state_changed', 
-    (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      // console.log('Upload is ' + progress + '% done');
-      switch (snapshot.state) {
-        case 'paused':
-          // console.log('Upload is paused');
-          break;
-        case 'running':
-          // console.log('Upload is running');
-          break;
-        default:
-          break;
+  useEffect(() => {
+    setIsFriendReq(false)
+    currentUserFriendRequests.map(user => 
+      user.userID === id && setIsFriendReq(true)
+    )
+  }, [id,currentUserFriendRequests])
+
+  useEffect(() => {
+    setIsMyFriendReq(false)
+    myFriendRequests.map(user => 
+      user.userID === id && setIsMyFriendReq(true)
+    )
+  }, [id,myFriendRequests])
+
+  useEffect(() => {
+    setIsFriend(false)
+    currentUserFriends.map(user =>{
+      if (user.userID === id) {
+        setIsFriend(true)
       }
-    }, 
-    (error) => {
-      console.log(error)
-    }, 
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        dispatch(uploadImg({userID,downloadURL}))
-      });
-    }
-    );
-    }
-    newImg && uploadImgFunc()
-    setNewImg(null)
-  }, [newImg])  
-
-  useEffect(() => {
-    currentUserFollowing.map(following =>following.userID === id ?setIsFollowing(following) : setIsFollowing(""))
-  },[userFollowers,userFollowing])
+    })
+  }, [id,currentUserFriends,isFriendReq])
 
 
+  //func
   const addToFriendsFunc = () => {
     const newFriendID = id ? id : ""
-    // dispatch(addToFriends({userID,newFriendID}))
+    dispatch(friendRequest({newFriendID,userID}))
   }
+
+  const acceptFriendRequest = () =>{
+    const newFriendID = id ? id : ""
+    dispatch(addToFriends({newFriendID,userID}))
+  }
+
+  const removeFriendRequestFunc = () =>{
+    const newFriendID = id ? id : ""
+    dispatch(removeFriendRequest({newFriendID,userID}))
+  }
+
+  const removeFromFriendsFunc = () => {
+    const newFriendID = id ? id : ""
+    dispatch(removeFromFriends({newFriendID,userID}))
+  }
+
 
   const followFunc = () =>{
     const followerID = id ? id : ""
-    dispatch(follow({userID,followerID}))
+    if (!loading) {
+      dispatch(follow({userID,followerID}))
+    }
   }
+
   const unFollowFunc = () =>{
     const followerID = id ? id : ""
-    const docID = isFollowing?.docID ? isFollowing.docID : ""
-
-    dispatch(unfollow({followerID,userID,docID}))
+    if (!loading) {
+      dispatch(unfollow({followerID,userID}))
+    }
   }
 
   const startAChatFunc = () =>{
-    const companionID = userInfo.userID
-    dispatch(startAChat({companionID,userID}))
-    navigate("/messages")
+    if (userInfo) {
+      const companionID = userInfo.userID
+      dispatch(startAChat({companionID,userID}))
+      navigate(`/messages/${userInfo.userID}`)
+    }
   }
 
   return (
-    <div>
-      <div className="w-full shadow-xl rounded-xl p-7 flex justify-between">
-        <div className="w-fit flex flex-col gap-1 items-center">
+    <div className='w-full'>
+      <div className="shadow-xl rounded-xl p-4 flex justify-between">
+        <div className="w-fit flex flex-col gap-1">
           <div className="profile__img h-37.5">
             <UserImg
-              className='border-4 border-white h-full'
+              className='border-4 border-lightBlue h-full'
               width='150'
-              src={userInfo.profileImg}
+              src={userInfo?.profileImg.link}
             />
             {id === userID &&
               <>
@@ -174,52 +200,77 @@ const Profile:FC = () => {
                 <input 
                   type={"file"}
                   id="newImgBtn"
-                  onChange={(e:any)=>setNewImg(e.target.files[0])}
-                  className="hidden" 
+                  onChange={(e:any)=>uploadImg(e)}
+                  className="hidden"
+                  accept="image/jpeg, image/png"
                 />
               </>
             }
           </div>
-          <h1 className='text-2xl'>{userInfo.firstName + " " + userInfo.  lastName}</h1>
-        </div>
-        {userID === id ||
-          <div className="">
-          <Button title='Add to friends' onClickFunc={addToFriendsFunc}/>
-          <Button title='Send Message' onClickFunc={startAChatFunc}/>
-          {isFollowing
-            ? <Button title='Unfollow' onClickFunc={unFollowFunc}/>
-            : <Button title='Follow' onClickFunc={followFunc}/>
+          <h1 className='text-2xl'>{`${userInfo?.firstName} ${userInfo?.lastName}`}</h1>
+          {userID === id ||
+          <div className="flex items-center gap-4 mt-2">
+            {isFollowing
+              ? <Button title='Unfollow' onClickFunc={unFollowFunc}/>
+              : <Button title='Follow' onClickFunc={followFunc}/>
+            }
+          {!isFriend && !isFriendReq && !isMyFriendReq
+            ? <UserPlusIcon 
+                className='icon w-6 cursor-pointer' 
+                onClick={()=>addToFriendsFunc()}
+              />
+            : undefined
           }
+          {isFriendReq 
+            && <div className="flex p-1 gap-0.5 border rounded-xl" onClick={acceptFriendRequest}>
+            <EnvelopeIcon className='icon w-5.5 cursor-pointer'/>
+            <UserPlusIcon className='icon w-5.5 cursor-pointer'/>
+          </div>
+          }
+          {isMyFriendReq &&
+            <div className="flex p-1 gap-0.5 border rounded-xl" onClick={removeFriendRequestFunc}>
+              <EnvelopeIcon className='icon w-5.5 cursor-pointer'/>
+              <UserMinusIcon className='icon w-5.5 cursor-pointer'/>
+            </div>
+          }
+          {isFriend 
+            && <UserMinusIcon 
+                  className='icon w-6 cursor-pointer' 
+                  onClick={()=>removeFromFriendsFunc()}
+                />
+          }
+          <ChatBubbleOvalLeftEllipsisIcon className='icon w-6 cursor-pointer' onClick={()=>startAChatFunc()}/>
         </div>
         }
+        </div>
+          <Intro
+            followers={userFollowers.length}
+            following={userFollowing.length}
+            friends={userFriends.length}
+            dateOfBirthday={userInfo?.dateOfBirthday}
+            location={userInfo?.location}
+          />
       </div>
-      <div className="mt-8 flex gap-6">
-        <Intro
-          followers={userFollowers.length}
-          following={userFollowing.length}
-          friends={userFriends.length}
-          dateOfBirthday={userInfo.dateOfBirthday}
-          location={userInfo.location}
-          phoneNumber={userInfo.phoneNumber}
-        />
-        <div className="w-129 flex flex-col gap-7">
+      <div className="mt-8">
+        <div className="w-full flex flex-col gap-7">
           {
             id === userID && 
               <CreatePostForm/>
           }
-          {userPosts.map(post => 
-            <Post
-              key={post.id}
-              authorID={post.authorID}
-              comments={post.comments}
-              date={post.date}
-              id={post.id}
-              likes={post.likes}
-              share={post.share}
-              text={post.text}
-              imgs={post.imgs}
-            />
-          )}
+          {userPosts.length > 0 
+            ? userPosts.map(post => 
+                <Post
+                  key={post.id}
+                  post={post}
+                />
+              )
+            : <ContentBlock className="w-full">
+                <div className='flex flex-col gap-2 items-center justify-center'>
+                  <ArchiveBoxIcon className='w-12'/>
+                  <p className=''>There are no posts on the wall yet</p>
+                </div>
+              </ContentBlock>
+        }
         </div>
       </div>
     </div>

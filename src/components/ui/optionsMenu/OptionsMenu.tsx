@@ -1,4 +1,4 @@
-import { DotsHorizontalIcon } from '@heroicons/react/outline'
+import { EllipsisHorizontalIcon} from '@heroicons/react/24/outline'
 import { FC, useEffect, useRef } from 'react'
 import { TypeSetState } from '../../types/data'
 import './OptionsMenu.scss'
@@ -29,8 +29,8 @@ const OptionsMenu:FC<propsPostOptionsMenu> = ({className,isActive,setIsActive,ch
   }
 
   return (
-    <div className="">
-      <DotsHorizontalIcon
+    <div className="relative">
+      <EllipsisHorizontalIcon
         onClick={()=>setIsActive(!isActive)} 
         className={isActive
           ? 'options-menu__btn options-menu--active'

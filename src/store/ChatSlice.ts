@@ -1,24 +1,36 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { arrayUnion, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { IChatData, IMessage, userID} from "../components/types/data";
+import { arrayUnion, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { IChat, IChatData, IMessage, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 
 
 interface messagesState{
-  chats:IChatData[],
+  chats:IChat[],
   loading:boolean,
   status?:string,
   error:boolean
 }
 
-interface propsSendMessage{
-  userID:userID,
-  companionID:userID,
-  message:string,
-}
 interface propsStartAChat{
   userID:userID,
   companionID:userID,
+}
+
+interface propsSendMessage extends propsStartAChat{
+  newMessage:IMessage,
+}
+
+interface propsEditMessage extends propsStartAChat{
+  id:string,
+  messagesList:IMessage[],
+  newText:string,
+}
+interface propsDeleteMessage extends propsStartAChat{
+  id:string,
+  messagesList:IMessage[],
+}
+interface propsFavoriteChat extends propsStartAChat{
+  isFavorite:boolean,
 }
 //state
 const initialState:messagesState = {
@@ -30,15 +42,7 @@ const initialState:messagesState = {
 
 export const sendMessage = createAsyncThunk<any,propsSendMessage,{rejectValue:string}>(
   "chats/sendMessage",
-  async function({companionID,message,userID},{rejectWithValue}){
-    const newMessage:IMessage = {
-      id:Date.now().toString(),
-      fromUserID:userID,
-      message,
-      date:new Date,
-      state:"unread",
-    }
-    
+  async function({companionID,newMessage,userID},{rejectWithValue}){    
     try {
       await setDoc(doc(db,"chats", userID, "companion",companionID),{
         companionID:companionID,
@@ -54,6 +58,48 @@ export const sendMessage = createAsyncThunk<any,propsSendMessage,{rejectValue:st
     }
   }
 )
+
+export const deleteMessage = createAsyncThunk<any,propsDeleteMessage,{rejectValue:string}>(
+  "chats/deleteMessage",
+  async function({companionID,userID,id,messagesList},{rejectWithValue}){
+    try {
+      await updateDoc(doc(db,"chats", userID, "companion",companionID),{
+        messages:messagesList.filter(item => item.id !== id)
+      });
+      await updateDoc(doc(db,"chats", companionID, "companion",userID),{
+        messages:messagesList.filter(item => item.id !== id)
+      });
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("failed delete message")
+    }
+  }
+)
+
+export const editMessage = createAsyncThunk<any,propsEditMessage,{rejectValue:string}>(
+  "chats/editMessage",
+  async function({companionID,userID,id,messagesList,newText},{rejectWithValue}){
+
+    const newMessList:IMessage[] = messagesList.map(item =>
+      item.id === id 
+      ? { ...item, text: newText } 
+      : item
+    )
+
+    try {
+      await updateDoc(doc(db,"chats", userID, "companion",companionID),{
+        messages:newMessList
+      });
+      await updateDoc(doc(db,"chats", companionID, "companion",userID),{
+        messages:newMessList
+      });
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("failed edit message")
+    }
+  }
+)
+
 export const startAChat = createAsyncThunk<any,propsStartAChat,{rejectValue:string}>(
   "chats/startAChat",
   async function({companionID,userID},{rejectWithValue}){
@@ -69,12 +115,36 @@ export const startAChat = createAsyncThunk<any,propsStartAChat,{rejectValue:stri
   }
 )
 
+export const deleteChat = createAsyncThunk<any,propsStartAChat,{rejectValue:string}>(
+  "chats/deleteChat",
+  async function({companionID,userID},{rejectWithValue}){
+    try {
+      await deleteDoc(doc(db,"chats",userID,"companion",companionID))
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("failed delete a chat")
+    }
+  }
+)
+export const favoriteChat = createAsyncThunk<any,propsFavoriteChat,{rejectValue:string}>(
+  "chats/favoriteChat",
+  async function({companionID,userID,isFavorite},{rejectWithValue}){
+    try {
+      await updateDoc(doc(db,"chats", userID, "companion",companionID),{
+        favorite:isFavorite
+      });
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue("failed edit message")
+    }
+  }
+)
 
 const ChatSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    getChats(state,action:PayloadAction<IChatData[]>){
+    getChats(state,action:PayloadAction<IChat[]>){
       state.chats = action.payload
     }
   },

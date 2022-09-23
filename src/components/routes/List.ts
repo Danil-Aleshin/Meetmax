@@ -5,15 +5,10 @@ import Profile from "../pages/profile/Profile";
 import Authentication from "../pages/signIn/Authentication";
 import Registration from "../pages/signIn/Registration";
 import Friends from "../pages/friends/Friends";
-import Notification from "../pages/notification/Notification";
+import Settings from "../pages/settings/Settings";
+import { IRoute } from "../types/data";
 
 
-
-interface IRoute{
-  path: string,
-  component: React.FC,
-  auth: boolean,
-}
 
 export const routes:IRoute[] = [
   {
@@ -32,7 +27,7 @@ export const routes:IRoute[] = [
     auth:false,
   },
   {
-    path:"/messages",
+    path:"/messages/*",
     component:Messages,
     auth:true,
   },
@@ -42,13 +37,18 @@ export const routes:IRoute[] = [
     auth:true,
   },
   {
-    path:"/my-community",
+    path:"/friends/*",
+    component:Friends,
+    auth:true,
+  },
+  {
+    path:"/my-community/*",
     component:MyCommunity,
     auth:true,
   },
   {
-    path:"/notification",
-    component:Notification,
+    path:"/settings/*",
+    component:Settings,
     auth:true,
   },
   {

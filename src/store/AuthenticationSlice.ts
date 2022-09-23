@@ -19,7 +19,6 @@ interface propsFetchAuthentication{
 
 interface propsFetchRegistration extends authValue{
   gender:string,
-  dateOfBirthday?:string,
 }
 
 //state
@@ -44,8 +43,6 @@ propsFetchAuthentication,
       const user = userCredential.user;
       return user.uid
     } catch (error:any) {
-      console.log(error.message)
-      console.log(error.code)
       return rejectWithValue(error.code)
     }
 
@@ -62,7 +59,6 @@ export const fetchRegistration = createAsyncThunk<any,propsFetchRegistration,{re
     password,
     phoneNumber,
     gender,
-    dateOfBirthday
   },{rejectWithValue}) {
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -76,8 +72,7 @@ export const fetchRegistration = createAsyncThunk<any,propsFetchRegistration,{re
         firstName:firstName,
         lastName:lastName,
         gender:gender,
-        profileImg:"https://firebasestorage.googleapis.com/v0/b/meetmax-ada29.appspot.com/o/noProfileImg.png?alt=media&token=bf855d42-e711-4d1b-8c9e-cf0d9325bd0c",
-        dateOfBirthday:dateOfBirthday,
+        profileImg:"",
         location:"",
         phoneNumber:phoneNumber,
       })
@@ -90,9 +85,7 @@ export const fetchRegistration = createAsyncThunk<any,propsFetchRegistration,{re
       setDoc(doc(db,'posts',userID,"data"),{})
     })
     .catch((error) => {
-      console.log(error.code);
-      console.log(error.message);
-      return rejectWithValue("Не удалось зарегестрироваться :(")
+      return rejectWithValue("Failed to register")
     });
   }
 )
@@ -104,7 +97,7 @@ export const fetchSignOut = createAsyncThunk<any,undefined,{rejectValue:string}>
     try {
       await signOut(auth)
     } catch (error) {
-      return rejectWithValue("Ошибка соединения с сервером :(")
+      return rejectWithValue("Server connection error :(")
     }
   }
 )
@@ -112,7 +105,12 @@ export const fetchSignOut = createAsyncThunk<any,undefined,{rejectValue:string}>
 const AuthenticationSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    resetError(state){
+      state.error = false
+      state.status = ""
+    }
+  },
   extraReducers:(builder)=>{
     builder
     //auth
@@ -155,6 +153,6 @@ const AuthenticationSlice = createSlice({
   }
 
 })
-export const {} = AuthenticationSlice.actions
+export const {resetError} = AuthenticationSlice.actions
 
 export default AuthenticationSlice.reducer

@@ -1,0 +1,12 @@
+.switch-btn {
+  @apply inline-block w-12 h-6 rounded-xl cursor-pointer relative border-2 border-superLightGray;
+
+  &.active {
+    &::after {
+      @apply left-6.5;
+    }
+  }
+  &::after {
+    @apply content-[""] h-4 w-4 rounded-2xl bg-lightBlue top-0.5 left-0.5 absolute transition-all;
+  }
+}

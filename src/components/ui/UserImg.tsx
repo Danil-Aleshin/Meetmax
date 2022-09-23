@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 
 interface propsUserImg{
   width:string,
@@ -7,7 +7,7 @@ interface propsUserImg{
   alt?:string,
 }
 
-const UserImg:FC<propsUserImg> = ({
+const UserImg:FC<propsUserImg> = memo(({
   className,
   src,
   width,
@@ -20,6 +20,6 @@ const UserImg:FC<propsUserImg> = ({
       className={"rounded-full " + className} alt={alt}
     />
   )
-}
+})
 
 export default UserImg

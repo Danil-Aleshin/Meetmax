@@ -5,10 +5,12 @@ interface IInputForm{
   className?:string,
   placeholder?:string,
   value:string,
-  onKeyDown:React.KeyboardEventHandler<HTMLInputElement>,
+  onKeyDown?:React.KeyboardEventHandler<HTMLInputElement>,
 
   onChange:(e:React.ChangeEvent<HTMLInputElement>
     | React.ChangeEvent<HTMLTextAreaElement>)=>void,
+  
+  
 }
 
 const InputText:FC<IInputForm> = memo(({
