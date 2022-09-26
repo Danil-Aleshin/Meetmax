@@ -1,13 +1,13 @@
 import { FaceSmileIcon, PaperClipIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import React, { FC, memo, useEffect, useRef, useState } from 'react'
+import React, { FC, memo, useState } from 'react'
 import AddMessageBtn from './addMessageBtn/AddMessageBtn'
 import InputText from './InputText'
 import Picker from 'emoji-picker-react';
 import { IFile, TypeSetState } from '../types/data';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../../firebaseConfig';
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux';
-import { deleteFile } from '../../store/UploadFileSlice';
+import { deleteImgRequest } from '../reusableFunctions/reusableFunctions';
 
 interface propsAddMessageForm{
   value:string,
@@ -79,9 +79,9 @@ const AddMessageForm:FC<propsAddMessageForm> = memo(({
     })
   }
 
-  const delteImg = (name:string,path:string) =>{
-    dispatch(deleteFile({name,path}))
-    setFilesAttachment(filesAttachment.filter(item => item.name !== name))
+  const deleteImg = (name:string,path:string) =>{
+    const files = deleteImgRequest(name,path,filesAttachment)
+    setFilesAttachment(files)
   }
 
   return (
@@ -132,7 +132,7 @@ const AddMessageForm:FC<propsAddMessageForm> = memo(({
                   <img src={file.link} className="max-w-full" width={"100"} alt="" />
                   <div 
                     className="absolute top-0 left-0 w-full h-full bg-opacityBlack cursor-pointer"
-                    onClick={()=>delteImg(file.name,file.path)}
+                    onClick={()=>deleteImg(file.name,file.path)}
                   >
                     <XMarkIcon className='w-5 ml-auto bg-black'/>
                   </div>

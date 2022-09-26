@@ -1,4 +1,6 @@
 import React, { FC, memo } from 'react'
+import { Link } from 'react-router-dom'
+import { userID } from '../types/data'
 
 interface propsUserImg{
   width:string,
@@ -11,14 +13,14 @@ const UserImg:FC<propsUserImg> = memo(({
   className,
   src,
   width,
-  alt
+  alt,
 }) => {
   return (
-    <img 
-      src={src}
-      width={width}
-      className={"rounded-full " + className} alt={alt}
-    />
+      <img 
+        src={src}
+        width={width}
+        className={"rounded-full " + className} alt={alt}
+      />
   )
 })
 

@@ -31,7 +31,7 @@ export const changeProfileImg = createAsyncThunk<any,propsChangeProfileImg,{reje
 
     try {
       const name = new Date().getTime().toString() + newImg?.name
-      const storageRef = ref(storage,`profileImg/${userID}/${name}`)
+      const storageRef = ref(storage,`profileImages/${userID}/${name}`)
       const uploadTask = uploadBytesResumable(storageRef, newImg);
 
   uploadTask.on('state_changed', 

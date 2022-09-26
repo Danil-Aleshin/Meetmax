@@ -1,0 +1,26 @@
+.swiper-button-prev {
+  color: #4e5e78 !important;
+  background: white;
+  border-radius: 50%;
+  height: 18.5px !important;
+  width: 18.5px !important;
+  left: 5px !important;
+  &::after {
+    font-size: 12px !important;
+    margin-right: 1.5px;
+    margin-top: 1px;
+  }
+}
+.swiper-button-next {
+  color: #4e5e78 !important;
+  background: white;
+  border-radius: 50%;
+  height: 19px !important;
+  width: 19px !important;
+  right: 5px !important;
+  &::after {
+    font-size: 12px !important;
+    margin-left: 1.5px;
+    margin-top: 1px;
+  }
+}

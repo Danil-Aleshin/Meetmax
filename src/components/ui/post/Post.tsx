@@ -95,7 +95,6 @@ const Post:FC<propsPost> = memo(({
 
   const removePost = () =>{
     const postID = id
-
     dispatch(fetchRemovePost({postID,userID}))
   }
   
@@ -130,7 +129,7 @@ const Post:FC<propsPost> = memo(({
               />
             <div className="flex flex-col gap-0.5">
               <p>{`${userInfo?.firstName} ${userInfo?.lastName}`}</p>
-              <span className='text-xs font-normal opacity-80 '>{`${postDate.time} ${postDate.day}.${postDate.month}.${postDate.year}`}</span>
+              <span className='text-xs font-normal'>{`${postDate.time} ${postDate.day}.${postDate.month}.${postDate.year}`}</span>
             </div>
           </Link>
           {authorID === userID 

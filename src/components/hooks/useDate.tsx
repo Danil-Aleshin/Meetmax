@@ -34,9 +34,6 @@ const useDate = (d:any) => { // type for method toDate() === "Timestamp" in fire
     setTime(`${h}:${min}`)
   }, [d])
 
-  // const dateNow = new Date
-  // console.log(dateNow)
-  
   return {
     day,month,year,hours,minutes,date,time
   }

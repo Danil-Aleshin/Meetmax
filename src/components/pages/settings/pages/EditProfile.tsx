@@ -82,7 +82,7 @@ const EditProfile = () => {
         <h2 className='text-xl font-bold'>Edit Profile</h2>
         <div className="profile__img h-32 mt-7 w-32">
             <UserImg
-              className='border-4 border-white h-full'
+              className='h-full'
               width='128'
               src={currentUser.profileImg.link}
             />

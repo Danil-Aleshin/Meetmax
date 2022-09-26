@@ -1,7 +1,6 @@
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import {FC, useEffect, useState} from 'react'
-import { auth, db } from '../../../firebaseConfig'
-import { deleteFile } from '../../../store/UploadFileSlice'
+import { db } from '../../../firebaseConfig'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { IPost } from '../../types/data'
 import CreatePostForm from '../../ui/CreatePostForm'
@@ -9,11 +8,11 @@ import Post from '../../ui/post/Post'
 
 
 const Home:FC = () => {
+  
   const [posts, setPosts] = useState<IPost[]>([])
-  const dispatch = useAppDispatch()
   
   const {currentUserFollowing} = useAppSelector(state => state.followers)
-  const {allUsers,currentUser} = useAppSelector(state => state.users)
+  const {allUsers} = useAppSelector(state => state.users)
 
 
   useEffect(() => {

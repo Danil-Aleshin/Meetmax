@@ -15,7 +15,6 @@ import FollowersReducer from "./FollowersSlice"
 import PreloaderReducer from "./PreloaderSlide"
 import ThemeReducer from "./ThemeSlice"
 import EditProfileReducer from "./EditProfileSlice"
-import uploadFileReducer from "./UploadFileSlice"
 import ViewPicturesReducer from "./ViewPicturesSlice"
 
 
@@ -23,7 +22,7 @@ import ViewPicturesReducer from "./ViewPicturesSlice"
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","uploadFile","viewPictures"]
+  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","viewPictures"]
 }
 const rootReducer = combineReducers({
   auth:AuthenticationReducer,
@@ -35,7 +34,6 @@ const rootReducer = combineReducers({
   preloader:PreloaderReducer,
   theme:ThemeReducer,
   editProfile:EditProfileReducer,
-  uploadFile:uploadFileReducer,
   viewPictures:ViewPicturesReducer
 })
 

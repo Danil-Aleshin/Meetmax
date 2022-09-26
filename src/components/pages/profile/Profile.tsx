@@ -10,13 +10,12 @@ import Button from '../../ui/Button'
 import CreatePostForm from '../../ui/CreatePostForm'
 import Post from '../../ui/post/Post' 
 import Intro from './Intro'
-import './Profile.scss'
 import { changeProfileImg } from '../../../store/EditProfileSlice'
 import { startAChat } from '../../../store/ChatSlice'
 import UserImg from '../../ui/UserImg'
 import { ChatBubbleOvalLeftEllipsisIcon, UserPlusIcon, UserMinusIcon, EnvelopeIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
 import ContentBlock from '../../ui/ContentBlock'
-
+import './Profile.scss'
 
 
 const Profile:FC = () => {
@@ -187,24 +186,24 @@ const Profile:FC = () => {
   return (
     <div className='w-full'>
       <div className="shadow-xl rounded-xl p-4 flex justify-between">
-        <div className="w-fit flex flex-col gap-1">
+        <div className="w-fit flex flex-col gap-1 items-start">
           <div className="profile__img h-37.5">
-            <UserImg
-              className='border-4 border-lightBlue h-full'
-              width='150'
-              src={userInfo?.profileImg.link}
-            />
+              <UserImg
+                className='h-full'
+                width='150'
+                src={userInfo?.profileImg.link}
+              />
             {id === userID &&
-              <>
-                <label className='new-img' htmlFor='newImgBtn'></label>
-                <input 
-                  type={"file"}
-                  id="newImgBtn"
-                  onChange={(e:any)=>uploadImg(e)}
-                  className="hidden"
-                  accept="image/jpeg, image/png"
-                />
-              </>
+            <>
+              <label className='new-img' htmlFor='newImgBtn'></label>
+              <input 
+                type={"file"}
+                id="newImgBtn"
+                onChange={(e:any)=>uploadImg(e)}
+                className="hidden"
+                accept="image/jpeg, image/png"
+              />
+            </>
             }
           </div>
           <h1 className='text-2xl'>{`${userInfo?.firstName} ${userInfo?.lastName}`}</h1>

@@ -1,9 +1,7 @@
-import { CakeIcon, DevicePhoneMobileIcon, MapPinIcon, UsersIcon } from '@heroicons/react/24/outline'
+import { CakeIcon, MapPinIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { Timestamp } from 'firebase/firestore'
-import React, { FC, memo } from 'react'
-import { Link } from 'react-router-dom'
+import { FC, memo } from 'react'
 import useDate from '../../hooks/useDate'
-import ContentBlock from '../../ui/ContentBlock'
 
 interface propsIntro{
   dateOfBirthday?:Timestamp,

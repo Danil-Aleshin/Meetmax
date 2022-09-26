@@ -18,7 +18,7 @@ const useInput = (
     React.ChangeEvent<HTMLTextAreaElement>) =>{
     setValue(e.target.value)
   }, [])
-  // useMemo(() => value, [value])
+
 
   return {
     value,

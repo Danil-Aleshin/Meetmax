@@ -1,12 +1,10 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import { FC, memo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { deleteMessage, editMessage } from '../../../store/ChatSlice'
+import { FC, memo } from 'react'
+import { deleteMessage } from '../../../store/ChatSlice'
 import { setActive } from '../../../store/ViewPicturesSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import useDate from '../../hooks/useDate'
 import { IFile, IMessage, IUserInfo, TypeSetState } from '../../types/data'
-import UserImg from '../../ui/UserImg'
 
 
 interface propsMessageCard{
@@ -28,10 +26,7 @@ const MessageCard:FC<propsMessageCard> = memo(({
   setMessageEditing,
 }) => {
 
-  const [viewPhoto, setViewPhoto] = useState<IFile[]>([])
-
-  // const {} = useAppSelector(state => state.viewPictures)
-  const {currentUser:{userID}, currentUser} = useAppSelector(state => state.users)
+  const {currentUser:{userID}} = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
 
   const messageDate = useDate(date)

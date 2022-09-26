@@ -17,7 +17,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation } from 'swiper'
 import ModalWindow from '../ui/modalWindow/ModalWindow'
 import { setDeactive } from '../../store/ViewPicturesSlice'
-
+import '../ui/SwiperMainStyles.scss'
 
 interface propsLayout{
   children:JSX.Element

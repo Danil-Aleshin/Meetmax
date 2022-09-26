@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 import { fetchSignOut } from '../../../store/AuthenticationSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import useInput from '../../hooks/useInput'
-import AuthorImg from '../../ui/UserImg'
 import InputText from '../../ui/InputText'
 import MainLogo from '../../ui/MainLogo'
 import './Header.scss'
 import ContentBlock from '../../ui/ContentBlock'
+import UserImg from '../../ui/UserImg'
 
 const Header:FC = () => {
 
@@ -66,7 +66,7 @@ const Header:FC = () => {
         ref={optionsMenuBtn}
       >
         <div>
-        <AuthorImg
+        <UserImg
           src={currentUser.profileImg.link}
           width={"40"}
           className="h-10"
@@ -83,7 +83,7 @@ const Header:FC = () => {
                 to={`/${currentUser.userID}`} 
                 className='flex gap-2 items-center'
               >
-                <AuthorImg
+                <UserImg
                   src={currentUser.profileImg.link}
                   width={"40"}
                   className="h-10"

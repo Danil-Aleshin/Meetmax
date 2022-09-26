@@ -10,9 +10,9 @@ import InputText from './InputText'
 import Picker from 'emoji-picker-react';
 import { Link } from 'react-router-dom'
 import UserImg from './UserImg'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../../firebaseConfig'
-import { deleteFile } from '../../store/UploadFileSlice'
+import { deleteImgRequest } from '../reusableFunctions/reusableFunctions'
 
 interface propsCreatePostForm{
 
@@ -25,8 +25,7 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
 
 
   const {userID,profileImg} = useAppSelector(state => state.users.currentUser)
-  const {error,status} = useAppSelector(state => state.posts)
-  const {fileLink,loading} = useAppSelector(state => state.uploadFile)
+  const {status} = useAppSelector(state => state.posts)
   const dispatch = useAppDispatch()
   
  
@@ -67,7 +66,6 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
     })
   }
 
-  
   const addNewPost = () =>{
     
     const newPost:IPost = {
@@ -85,9 +83,9 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
     setFilesAttachment([])
   }
 
-  const delteImg = (name:string,path:string) =>{
-    dispatch(deleteFile({name,path}))
-    setFilesAttachment(filesAttachment.filter(item => item.name !== name))
+  const deleteImg = (name:string,path:string) =>{
+    const files = deleteImgRequest(name,path,filesAttachment)
+    setFilesAttachment(files)
   }
 
   const onEmojiClick = (event:any,emojiObject:any) =>{
@@ -124,7 +122,7 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
                   <img src={file.link} className="" alt="" />
                   <div 
                     className="absolute top-0 left-0 w-full h-full bg-opacityBlack cursor-pointer"
-                    onClick={()=>delteImg(file.name,file.path)}
+                    onClick={()=>deleteImg(file.name,file.path)}
                   >
                     <XMarkIcon className='w-5 ml-auto bg-black'/>
                   </div>
