@@ -48,52 +48,55 @@ const Profile:FC = () => {
         setUserInfo(user)
       }
     })
-
-    const fetchPosts = onSnapshot(collection(db, "posts", uid,"data"), (querySnapshot) =>{
-      let postsData:IPost[] = []
-      querySnapshot.forEach((doc) => {
-        postsData.push(doc.data() as IPost);
-    });
-      allUsers.map(user => {
-        postsData = postsData.map(post=>
-          user.userID === post.authorID
-            ? {...post, userInfo:user}
-            : post
-        )
+    if (userInfo) {
+      const fetchPosts = onSnapshot(collection(db, "posts", uid,"data"), (querySnapshot) =>{
+        let postsData:IPost[] = []
+        querySnapshot.forEach((doc) => {
+          postsData.push(doc.data() as IPost);
+      });
+        allUsers.map(user => {
+          postsData = postsData.map(post=>
+            user.userID === post.authorID
+              ? {...post, userInfo:user}
+              : post
+          )
+        })
+        postsData.sort((a,b) => a.date > b.date ? -1 : 1)
+        setUserPosts(postsData)
       })
-      postsData.sort((a,b) => a.date > b.date ? -1 : 1)
-      setUserPosts(postsData)
-    })
-
-    const fetchFollowers = onSnapshot(query(collection(db, "followers",uid,"data")), (querySnapshot) =>{
-      const followersData:ICommunity[] = []
-      querySnapshot.forEach((doc) => {
-        followersData.push(doc.data() as ICommunity);
-    });
-      setUserFollowers(followersData)
-    })
-
-    const fetchFollowing = onSnapshot(query(collection(db, "following",uid,"data")), (querySnapshot) =>{
-      const followingData:ICommunity[] = []
-      querySnapshot.forEach((doc) => {
-        followingData.push(doc.data() as ICommunity);
-    });
-      setUserFollowing(followingData)
-    })
-
-    const fetchFriends = onSnapshot(query(collection(db, "friends",uid,"data")), (querySnapshot) =>{
-      const friendsData:ICommunity[] = []
-      querySnapshot.forEach((doc) => {
-        friendsData.push(doc.data() as ICommunity);
-    });
-      setUserFriends(friendsData)
-    })
-
-    return () => {
-      fetchPosts()
-      fetchFriends()
-      fetchFollowers()
-      fetchFollowing()
+  
+      const fetchFollowers = onSnapshot(query(collection(db, "followers",uid,"data")), (querySnapshot) =>{
+        const followersData:ICommunity[] = []
+        querySnapshot.forEach((doc) => {
+          followersData.push(doc.data() as ICommunity);
+      });
+        setUserFollowers(followersData)
+      })
+  
+      const fetchFollowing = onSnapshot(query(collection(db, "following",uid,"data")), (querySnapshot) =>{
+        const followingData:ICommunity[] = []
+        querySnapshot.forEach((doc) => {
+          followingData.push(doc.data() as ICommunity);
+      });
+        setUserFollowing(followingData)
+      })
+  
+      const fetchFriends = onSnapshot(query(collection(db, "friends",uid,"data")), (querySnapshot) =>{
+        const friendsData:ICommunity[] = []
+        querySnapshot.forEach((doc) => {
+          friendsData.push(doc.data() as ICommunity);
+      });
+        setUserFriends(friendsData)
+      })
+  
+      return () => {
+        fetchPosts()
+        fetchFriends()
+        fetchFollowers()
+        fetchFollowing()
+      }
+    }else{
+      navigate("/")
     }
   }, [allUsers,id])
 
@@ -182,6 +185,7 @@ const Profile:FC = () => {
       navigate(`/messages/${userInfo.userID}`)
     }
   }
+
 
   return (
     <div className='w-full'>

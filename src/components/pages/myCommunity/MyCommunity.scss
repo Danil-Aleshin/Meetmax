@@ -8,14 +8,14 @@
     }
   }
   .text {
-    @apply px-16 transition-colors duration-300;
+    @apply px-5  transition-colors duration-300 md:px-16;
   }
 }
 
 .profile-card__list {
-  @apply overflow-auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: repeat(2, 1fr); */
   justify-content: center;
   gap: 16px;
+  @apply overflow-auto md:grid-cols-2;
 }

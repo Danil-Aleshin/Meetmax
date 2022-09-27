@@ -8,7 +8,7 @@ const Friends:FC = () => {
 
 
   return (
-    <ContentBlock className='w-full h-full'>
+    <ContentBlock className='w-full h-full overflow-hidden'>
       <>
         <Routes>
           <Route path='/' element={<MyFriendsList/>}/>

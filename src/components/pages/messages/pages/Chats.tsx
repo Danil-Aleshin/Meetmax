@@ -27,7 +27,7 @@ const Chats:FC<propsChats> = ({}) => {
 
 
   return (
-    <ContentBlock className='w-full h-full flex-shrink-0'>
+    <ContentBlock className='w-full h-full flex-shrink-0 overflow-hidden'>
     <>
       <div className="flex gap-4">
         <InputText
@@ -39,7 +39,7 @@ const Chats:FC<propsChats> = ({}) => {
           onKeyDown={search.onKeyDown}
         />
       </div>
-      <ul className='flex flex-col gap-1 mt-6'>
+      <ul className='flex flex-col h-full overflow-y-auto pb-12 gap-1 mt-6'>
         {filtredChats.map(item=> 
         <MessagePreviewCard
           key={item.chat.companionID}

@@ -1,6 +1,6 @@
 import { EyeSlashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { Navigation } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useAppSelector } from '../../../hooks/appRedux'
@@ -69,7 +69,7 @@ const MyFriendsList = () => {
             modules={[Navigation]}
             navigation
             spaceBetween={0}
-            slidesPerView={8}
+            slidesPerView={window.screen.width > 500 ? 8 : 4}
             className="w-full"
           >
           {recomendFriends.map(user => 
@@ -89,14 +89,14 @@ const MyFriendsList = () => {
           </Swiper>
         </div>
       </div>
-      <li className='flex flex-col gap-3'>
+      <div className='flex flex-col gap-3'>
         <div className="flex gap-2">
-          <Link className='hover:text-lightBlue transition-colors' to ="/friends">Friends</Link>
-          <Link className='hover:text-lightBlue transition-colors' to ="/friends/friends-requests">Friends Requests</Link>
+          <NavLink className='hover:text-lightBlue transition-colors' to ="/friends">Friends</NavLink>
+          <NavLink className='hover:text-lightBlue transition-colors' to ="/friends/friends-requests">Friends Requests</NavLink>
         </div>
       {
         filtredFriendList.length 
-        ? <ul className='flex flex-col gap-4'>
+        ? <ul className='flex flex-col grow gap-4 overflow-y-auto'>
           {filtredFriendList.map(friend =>
             <FriendsCard
               key={friend.userID}
@@ -109,7 +109,7 @@ const MyFriendsList = () => {
         </ul>
         : <div className="text-center">No friend found :(</div>
       }
-      </li>
+      </div>
 
     </div>
   </div>

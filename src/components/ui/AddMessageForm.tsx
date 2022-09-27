@@ -115,7 +115,7 @@ const AddMessageForm:FC<propsAddMessageForm> = memo(({
             {
             showEmojiPicker && 
             <div className="absolute right-0 -top-80">
-              <Picker onEmojiClick={onEmojiClick} />
+              <Picker disableSearchBar={true} onEmojiClick={onEmojiClick} />
             </div>
             }
           </div>

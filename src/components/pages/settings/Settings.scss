@@ -2,6 +2,9 @@
   @apply flex gap-3 border-b border-b-superLightGray dark:border-b-darkBlue py-2 items-center cursor-pointer;
 
   &.active--link {
+    .settings__icon{
+      @apply text-lightBlue dark:text-lightBlue;
+    }
     .settings__title{
       @apply font-bold;
 
@@ -15,7 +18,7 @@
     @apply w-5.5 text-blue dark:text-superLightGray;
   }
   .settings__title {
-    @apply relative;
+    @apply relative hidden md:block;
     &::before,
     &::after {
       @apply absolute content-[""] w-0.6 rounded-sm h-3 bg-blue -right-5 top-0 opacity-0 transition-opacity;

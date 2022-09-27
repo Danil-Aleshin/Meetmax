@@ -50,14 +50,17 @@ const Header:FC = () => {
     <header className='header'>
       <div className="flex gap-16 items-center w-full">
         <MainLogo/>
-        <InputText 
-          Icon={MagnifyingGlassIcon}
-          placeholder='Search for something here...'
-          className='w-full border px-11 border-superLightGray dark:bg-lightBlack'
-          value={search.value}
-          onChange={search.onChange}
-          onKeyDown={search.onKeyDown}
-        />
+        {
+          window.screen.width > 600 &&
+          <InputText 
+            Icon={MagnifyingGlassIcon}
+            placeholder='Search for something here...'
+            className='global-search'
+            value={search.value}
+            onChange={search.onChange}
+            onKeyDown={search.onKeyDown}
+          />
+        }
       </div>
       <div
         className="profile-block"

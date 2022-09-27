@@ -1,15 +1,15 @@
 .sidebar {
-  @apply w-56 p-3 bg-white dark:bg-lightBlack transition-colors;
+  @apply w-full z-30 p-1.5 bg-white fixed bottom-0 left-0 dark:bg-lightBlack transition-colors md:p-3 md:sticky;
   grid-area: sidebar;
 }
 .nav__list {
-  @apply flex flex-col gap-3;
+  @apply flex gap-3 justify-center md:flex-col md:justify-start;
 }
 .nav__item {
   @apply h-11;
 }
 .nav__title {
-  @apply transition-colors duration-300;
+  @apply transition-colors duration-300 hidden md:block;
 }
 .nav__icon {
   @apply w-5 text-blue dark:text-white transition-colors duration-300;

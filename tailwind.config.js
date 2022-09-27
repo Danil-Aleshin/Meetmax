@@ -32,17 +32,18 @@ module.exports = {
     },
     extend: {
       spacing: {
-        0.2:"1px",
-        0.3:"1.5px",
+        0.2: "1px",
+        0.3: "1.5px",
         0.6: "3px",
-        1.4:"5px",
+        1.4: "5px",
         1.5: "6px",
         3.3: "12.5px",
         4.5: "18px",
-        4.6:"18.5px",
+        4.6: "18.5px",
         5.5: "21.5px",
         6.5: "26px",
         "mainContentHeight": " calc(100vh - 90px)",
+        "mainContentMobileHeight": " calc(100vh - 135px - 60px)",
         37: "148px",
         8.5: "34px",
         9.5: "38px",
@@ -51,7 +52,7 @@ module.exports = {
         39: "156px",
         67.5: "269px"
       },
-      zIndex:{
+      zIndex: {
 
       },
       maxWidth: {

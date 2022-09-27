@@ -108,7 +108,7 @@ const EditProfile = () => {
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
           regExpError={"[A-z]"}
           defaultValue={currentUser.firstName}
-          className="w-72"
+          className=""
         />
         <InputAuth
           Icon={UserIcon}
@@ -120,7 +120,7 @@ const EditProfile = () => {
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
           regExpError={"[A-z]"}
           defaultValue={currentUser.lastName}
-          className="w-72"
+          className=""
 
         />
         <InputAuth
@@ -133,7 +133,7 @@ const EditProfile = () => {
           regExp={/(?=^.{11,}$)^[0-9\s]*$/}
           regExpError={"[0-9] 11 characters"}
           defaultValue={currentUser.phoneNumber}
-          className="w-72"
+          className=""
         />
         <InputAuth
           Icon={MapPinIcon}
@@ -145,9 +145,9 @@ const EditProfile = () => {
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
           regExpError={"123"}
           defaultValue={currentUser.location}
-          className="w-72"
+          className=""
         />
-        <div className="relative w-72">
+        <div className="relative w-full">
           <DatePicker 
             className='w-full px-10 h-11 border-2 border-superLightGray dark:border-inputBorderBlue outline-none rounded-lg'
             calendarStartDay={2} 

@@ -13,6 +13,7 @@ import UserImg from './UserImg'
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../../firebaseConfig'
 import { deleteImgRequest } from '../reusableFunctions/reusableFunctions'
+import { setActive } from '../../store/ViewPicturesSlice'
 
 interface propsCreatePostForm{
 
@@ -122,10 +123,15 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
                   <img src={file.link} className="" alt="" />
                   <div 
                     className="absolute top-0 left-0 w-full h-full bg-opacityBlack cursor-pointer"
-                    onClick={()=>deleteImg(file.name,file.path)}
+                    onClick={()=>dispatch(setActive(filesAttachment))}
+                    
                   >
-                    <XMarkIcon className='w-5 ml-auto bg-black'/>
+                    <XMarkIcon 
+                      className='w-5 ml-auto bg-black' 
+                      onClick={()=>deleteImg(file.name,file.path)}
+                    />
                   </div>
+                  
                 </li>
               )}
             </ul>
@@ -133,7 +139,7 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
         </div>
         
       </div>
-    <div className='flex items-center justify-between mt-4 '> 
+    <div className='flex items-center justify-between mt-4 gap-1 '> 
       <ul className="flex items-center gap-4">
         <li className='flex items-center gap-2.5'>
           <label htmlFor='attachImagePost' className='flex items-center gap-2.5 cursor-pointer'>

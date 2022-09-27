@@ -2,6 +2,9 @@
   @apply p-3 flex justify-between bg-white dark:bg-lightBlack items-center transition-colors gap-20;
   grid-area: header ;
 }
+.global-search{
+  @apply w-full border px-11 border-superLightGray dark:bg-lightBlack;
+}
 .profile-block {
   @apply cursor-pointer flex gap-3 rounded-xl items-center h-10 bg-lightGray dark:bg-darkBlue relative flex-shrink-0;
 }

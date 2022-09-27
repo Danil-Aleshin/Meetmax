@@ -60,11 +60,11 @@
 }
 
 .about-user-menu {
-  @apply w-64 h-full transition-all duration-300 bg-white dark:bg-darkBlue absolute -right-1/2 top-0 rounded-l-xl;
-  &.about-user-menu--active{
-    @apply right-0
+  @apply w-64 h-full transition-all duration-300 bg-white dark:bg-darkBlue absolute -right-0 top-0 rounded-l-xl md:-right-1/2;
+  &.about-user-menu--active {
+    @apply right-0;
   }
-  
+
   &::-webkit-scrollbar {
     @apply w-1;
   }

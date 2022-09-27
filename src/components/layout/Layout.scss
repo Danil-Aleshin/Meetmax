@@ -1,8 +1,8 @@
 .container {
-  @apply max-w-4xl px-3 mx-auto;
+  @apply max-w-4xl px-2 mx-auto md:px-3;
 }
 .mainContent {
-  @apply p-6 rounded-2xl overflow-y-auto h-mainContentHeight;
+  @apply p-1 rounded-2xl overflow-y-auto h-mainContentMobileHeight md:p-6 md:h-mainContentHeight;
   grid-area: main;
   &::-webkit-scrollbar {
     @apply hidden;
@@ -15,4 +15,10 @@
   grid-template-areas:
     'header header'
     'sidebar main';
+  @media (max-width: 767px) {
+    grid-template-areas:
+      'header header'
+      'main main'
+      'sidebar sidebar';
+  }
 }

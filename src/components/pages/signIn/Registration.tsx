@@ -27,14 +27,21 @@ const Registration:FC = () => {
   })
 
   const dispatch = useAppDispatch()
-  const {status} = useAppSelector(state => state.auth)
+  const {isAuth} = useAppSelector(state => state.auth)
+  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(resetError())
   }, [])
   
 
-  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/")
+    }
+  }, [isAuth])
+
 
   const registration:SubmitHandler<authValue> = (data) =>{
     const email = data.email

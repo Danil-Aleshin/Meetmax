@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import RequireAuth from '../hoc/RequireAuth'
+import Home from '../pages/home/Home'
 import { routes } from './List'
 
 
@@ -19,7 +20,7 @@ const RoutesList:FC = () => {
           />
         )
       }
-      {/* <Route path='*' element={<NotFoundPage/>}/> */}
+      <Route path='*' element={<Home/>}/>
       </Routes>
   )
 }

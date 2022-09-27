@@ -1,7 +1,6 @@
 import {FC, useEffect} from 'react'
 import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
-import'./Layout.scss'
 import { useLocation } from 'react-router-dom'
 import { IChat, IChatData, ICommunity, IProfile, IUserData, IUserInfo, userID } from '../types/data'
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
@@ -15,9 +14,9 @@ import { hidePreloader, showPreloader } from '../../store/PreloaderSlide'
 import Preloader from '../ui/Preloader'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation } from 'swiper'
-import ModalWindow from '../ui/modalWindow/ModalWindow'
 import { setDeactive } from '../../store/ViewPicturesSlice'
 import '../ui/SwiperMainStyles.scss'
+import'./Layout.scss'
 
 interface propsLayout{
   children:JSX.Element
@@ -185,10 +184,10 @@ const Layout:FC<propsLayout> = ({children}) => {
     }
       {isActive && <div 
         id="viewPicturesWindow"
-        className='absolute top-0 left-0 w-full h-full bg-opacityBlack z-50'
+        className='absolute top-0 left-0 w-full h-full bg-opacityBlack z-50 overflow-hidden'
         onMouseDown={(e:any)=>closeViewPictures(e)}
       >
-          <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 flex items-center justify-center bg-lightGray dark:bg-lightBlack h-5/6'>
+          <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 flex items-center justify-center bg-lightGray dark:bg-lightBlack h-5/6'>
           <Swiper
               modules={[Navigation]}
               navigation
@@ -198,7 +197,7 @@ const Layout:FC<propsLayout> = ({children}) => {
             >
               {pictures.map(img => 
                 <SwiperSlide key={img.name} className='!h-auto flex justify-center items-center'>
-                  <img src={img.link} alt="" className='max-w-full max-h-full' />
+                  <img src={img.link} alt="" className='w-full' />
                 </SwiperSlide>
               )}
             </Swiper>

@@ -5,7 +5,7 @@ import { useInputReturn } from '../types/data'
 const useInput = (
   initialState:string = "",
   onKeyDownFunc:()=>void = () => {},
-  ):useInputReturn => {
+):useInputReturn => {
 
   const [value,setValue] = useState(initialState)
 
