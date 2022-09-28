@@ -1,7 +1,7 @@
 import {FC, useEffect} from 'react'
 import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { IChat, IChatData, ICommunity, IProfile, IUserData, IUserInfo, userID } from '../types/data'
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
 import { collection, onSnapshot, query } from 'firebase/firestore'
@@ -10,7 +10,7 @@ import { getAllUsers, getCurrentUser } from '../../store/UsersSlice'
 import { getFriendRequests, getFriends, getMyFriendRequests } from '../../store/FriendsSlice'
 import { getFollowers, getFollowing } from '../../store/FollowersSlice'
 import { getChats } from '../../store/ChatSlice'
-import { hidePreloader, showPreloader } from '../../store/PreloaderSlide'
+import { hidePreloader, showPreloader } from '../../store/PreloaderSlice'
 import Preloader from '../ui/Preloader'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation } from 'swiper'
@@ -34,6 +34,7 @@ const Layout:FC<propsLayout> = ({children}) => {
   const {pictures,isActive} = useAppSelector(state => state.viewPictures)
   const dispatch = useAppDispatch()
 
+  const navigate = useNavigate()
   
   useEffect(() => {
    const root = window.document.documentElement
@@ -65,6 +66,8 @@ const Layout:FC<propsLayout> = ({children}) => {
         return () => {
           fetchUsers()
         }
+    }else{
+      navigate("/login")
     }
   }, [isAuth])
 

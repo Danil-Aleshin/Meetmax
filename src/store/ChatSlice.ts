@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { arrayUnion, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore";
 import { IChat, IChatData, IMessage, userID} from "../components/types/data";
 import { db } from "../firebaseConfig";
 

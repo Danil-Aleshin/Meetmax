@@ -1,4 +1,4 @@
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { db } from '../../../firebaseConfig'
@@ -35,6 +35,7 @@ const Profile:FC = () => {
   const {allUsers,currentUser} = useAppSelector(state => state.users)
   const {currentUserFollowing,loading,status} = useAppSelector(state => state.followers)
   const {currentUserFriends,currentUserFriendRequests,myFriendRequests} = useAppSelector(state => state.friends)
+
 
   const dispatch = useAppDispatch()
 
@@ -95,12 +96,9 @@ const Profile:FC = () => {
         fetchFollowers()
         fetchFollowing()
       }
-    }else{
-      navigate("/")
     }
-  }, [allUsers,id])
+  }, [allUsers,id,userInfo])
 
-  
 
   const uploadImg = (e:any) =>{
     const newImg = e.target.files[0]
@@ -178,11 +176,16 @@ const Profile:FC = () => {
     }
   }
 
-  const startAChatFunc = () =>{
+  const startAChatFunc = async () =>{
     if (userInfo) {
       const companionID = userInfo.userID
-      dispatch(startAChat({companionID,userID}))
-      navigate(`/messages/${userInfo.userID}`)
+      const docSnap = await getDoc(doc(db, "chats", userID, "companion", companionID ))
+      if (docSnap.exists()) {
+        navigate(`/messages/${userInfo.userID}`)
+      } else {
+        dispatch(startAChat({companionID,userID}))
+        navigate(`/messages/${userInfo.userID}`)
+      }
     }
   }
 

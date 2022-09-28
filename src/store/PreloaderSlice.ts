@@ -1,25 +1,28 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface statePreloader{
-  isLoading:boolean
+  preloaderShowing:boolean
 }
 
 const initialState:statePreloader = {
-  isLoading:false
+  preloaderShowing:true
 }
 
 const PreloaderSlice = createSlice({
   name: "preloader",
   initialState,
   reducers: {
-    setIsLoading(state,action:PayloadAction<boolean>){
-      state.isLoading = action.payload
+    showPreloader(state){
+      state.preloaderShowing = true
+    },
+    hidePreloader(state){
+      state.preloaderShowing = false
     },
   },
 
 
 })
 
-export const {setIsLoading} = PreloaderSlice.actions
+export const {showPreloader,hidePreloader} = PreloaderSlice.actions
 
 export default PreloaderSlice.reducer

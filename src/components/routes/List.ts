@@ -51,9 +51,9 @@ export const routes:IRoute[] = [
     component:Settings,
     auth:true,
   },
-  {
-    path:"*",
-    component:Home,
-    auth:true,
-  },
+  // {
+  //   path:"*",
+  //   component:Home,
+  //   auth:true,
+  // },
 ]
