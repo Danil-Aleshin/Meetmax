@@ -5,7 +5,7 @@ interface statePreloader{
 }
 
 const initialState:statePreloader = {
-  isLoading:false
+  isLoading:true
 }
 
 const PreloaderSlice = createSlice({

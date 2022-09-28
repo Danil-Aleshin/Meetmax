@@ -1,5 +1,4 @@
 import {CommandLineIcon, UserIcon } from "@heroicons/react/24/outline";
-import { IRoute } from "../../types/data";
 import EditProfile from "./pages/EditProfile";
 import Theme from "./pages/AppSettings";
 
@@ -9,15 +8,13 @@ export const settingsList = [
   {title:"App", Icon:CommandLineIcon, to:"app"}
 ]
 
-export const settingsRoutes:IRoute[] = [
+export const settingsRoutes = [
   {
     path:"edit-profile",
     component:EditProfile,
-    auth:true,
   },
   {
     path:"app",
     component:Theme,
-    auth:true,
   },
 ]

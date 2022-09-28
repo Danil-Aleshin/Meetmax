@@ -1,76 +1,58 @@
-import {FC, useEffect} from 'react'
+import { collection, onSnapshot, query } from 'firebase/firestore'
+import { FC, useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import { Navigation } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { db } from '../../firebaseConfig'
+import { getChats } from '../../store/ChatSlice'
+import { getFollowers, getFollowing } from '../../store/FollowersSlice'
+import { getFriendRequests, getFriends, getMyFriendRequests } from '../../store/FriendsSlice'
+import { setIsLoading} from '../../store/PreloaderSlice'
+import { getAllUsers, getCurrentUser } from '../../store/UsersSlice'
+import { setDeactive } from '../../store/ViewPicturesSlice'
+import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
+import Friends from '../pages/friends/Friends'
+import Home from '../pages/home/Home'
+import Messages from '../pages/messages/Messages'
+import MyCommunity from '../pages/myCommunity/MyCommunity'
+import Profile from '../pages/profile/Profile'
+import Settings from '../pages/settings/Settings'
+import { IChat, IChatData, ICommunity, IProfile, IUserInfo } from '../types/data'
 import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
-import { useLocation } from 'react-router-dom'
-import { IChat, IChatData, ICommunity, IProfile, IUserData, IUserInfo, userID } from '../types/data'
-import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
-import { collection, onSnapshot, query } from 'firebase/firestore'
-import { db } from '../../firebaseConfig'
-import { getAllUsers, getCurrentUser } from '../../store/UsersSlice'
-import { getFriendRequests, getFriends, getMyFriendRequests } from '../../store/FriendsSlice'
-import { getFollowers, getFollowing } from '../../store/FollowersSlice'
-import { getChats } from '../../store/ChatSlice'
-import { hidePreloader, showPreloader } from '../../store/PreloaderSlide'
-import Preloader from '../ui/Preloader'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation } from 'swiper'
-import { setDeactive } from '../../store/ViewPicturesSlice'
-import '../ui/SwiperMainStyles.scss'
-import'./Layout.scss'
-
-interface propsLayout{
-  children:JSX.Element
-}
 
 
-const Layout:FC<propsLayout> = ({children}) => {
+const Layout:FC = () => {
 
-  const location = useLocation()
-
-  const {isAuth,userID} = useAppSelector(state=> state.auth)
-  const {preloaderShowing} = useAppSelector(state => state.preloader)
-  const {theme} = useAppSelector(state => state.theme)
-  const {allUsers} = useAppSelector(state => state.users)
   const {pictures,isActive} = useAppSelector(state => state.viewPictures)
+  const {isAuth,userID} = useAppSelector(state=> state.auth)
+  const {allUsers} = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
-
-  
-  useEffect(() => {
-   const root = window.document.documentElement
-   root.className = ""
-   root.classList.add(theme)
-
-  }, [theme])
+  dispatch(setIsLoading(true))
 
   useEffect(() => {
-    dispatch(hidePreloader())
-    if(isAuth){
-        dispatch(showPreloader())
-        const fetchUsers = onSnapshot(
-          query(collection(db, "users")),
-          (querySnapshot) =>{
-          const usersData:IUserInfo[] = []
-          querySnapshot.forEach((doc) => {
-            usersData.push(doc.data() as IUserInfo);
-        });
-          usersData.map(user =>
-            user.userID === userID && dispatch(getCurrentUser(user))
-          )
-          dispatch(getAllUsers(usersData))
-          dispatch(hidePreloader())
-        })
     
-  
-        
-        return () => {
-          fetchUsers()
-        }
+    const fetchUsers = onSnapshot(
+      query(collection(db, "users")),
+      (querySnapshot) =>{
+      const usersData:IUserInfo[] = []
+      querySnapshot.forEach((doc) => {
+        usersData.push(doc.data() as IUserInfo);
+    });
+      usersData.map(user =>
+        user.userID === userID && dispatch(getCurrentUser(user))
+      )
+      dispatch(getAllUsers(usersData))
+      dispatch(setIsLoading(false)) 
+      console.log("first")
+    })
+
+    return () => {
+      fetchUsers()
     }
   }, [isAuth])
 
   useEffect(() => {
-    if (isAuth) {
-
       const userProfile = (arr:ICommunity[]):IProfile[] =>{
         const userData:IProfile[] = []
         allUsers.map(user => {
@@ -83,8 +65,6 @@ const Layout:FC<propsLayout> = ({children}) => {
         })
         return userData
       }
-
-
       const fetchChats = onSnapshot(query(collection(db, "chats",userID,"companion")), (querySnapshot) =>{
         const chatsData:IChatData[] = []
         querySnapshot.forEach((doc) => {
@@ -144,56 +124,53 @@ const Layout:FC<propsLayout> = ({children}) => {
           followingData.push(doc.data() as ICommunity);
       });
         dispatch(getFollowing(userProfile(followingData)))
+        
       })
 
       return () =>{
-        fetchChats()
+      fetchChats()
         fetchFriends()
         fetchMyFriendRequests()
         fetchFriendRequests()
         fetchFollowing()
         fetchFollowers()
       }
+  }, [allUsers])
 
-    }
-  }, [isAuth,allUsers])
-  
   const closeViewPictures = (e:any) =>{
     if (e.target.id === "viewPicturesWindow") {
       dispatch(setDeactive())
     }
   }
+  
   return (
     <>
-    {preloaderShowing
-      ? <Preloader/>
-      : <div className="container">
-          {location.pathname === "/login"
-          || location.pathname === "/registration"
-          ? children
-          : <div className="table">
-              <Sidebar/>
-              <Header/>
-              <main className={"mainContent"}>
-                {children}
-              </main>
-              {/* <Friends/> */}
-            </div>
-          }
-        </div>
-    }
-      {isActive && <div 
-        id="viewPicturesWindow"
-        className='absolute top-0 left-0 w-full h-full bg-opacityBlack z-50 overflow-hidden'
-        onMouseDown={(e:any)=>closeViewPictures(e)}
-      >
+      <div className="table">
+        <Sidebar/>
+        <Header/>
+        <main className={"mainContent"}>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path='friends/*' element={<Friends/>}/>
+          <Route path='my-community/*' element={<MyCommunity/>}/>
+          <Route path='messages/*' element={<Messages/>}/>
+          <Route path='settings/*' element={<Settings/>}/>
+          <Route path=':id' element={<Profile/>}/>
+        </Routes>
+        </main>
+      </div>
+      {isActive && 
+        <div 
+          id="viewPicturesWindow"
+          className='absolute top-0 left-0 w-full h-full bg-opacityBlack z-50 overflow-hidden'
+          onMouseDown={(e:any)=>closeViewPictures(e)}
+        >
           <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 flex items-center justify-center bg-lightGray dark:bg-lightBlack h-5/6'>
-          <Swiper
+            <Swiper
               modules={[Navigation]}
               navigation
               spaceBetween={0}
               slidesPerView={1}
-
             >
               {pictures.map(img => 
                 <SwiperSlide key={img.name} className='!h-auto flex justify-center items-center'>
@@ -202,8 +179,9 @@ const Layout:FC<propsLayout> = ({children}) => {
               )}
             </Swiper>
           </div>
-        </div>}
-    </>
+        </div>
+      }
+  </>
   )
 }
 

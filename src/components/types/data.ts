@@ -74,11 +74,6 @@ export interface authValue {
   password:string,
   location?:string,
 }
-export interface IRoute{
-  path: string,
-  component: React.FC,
-  auth: boolean,
-}
 export interface useInputReturn{
   value:string,
   onChange:(e:React.ChangeEvent<HTMLInputElement> | 

@@ -3,17 +3,19 @@ import { FC, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchAuthentication, resetError } from '../../../store/AuthenticationSlice'
+import { setIsLoading } from '../../../store/PreloaderSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { authValue } from '../../types/data'
-import AuthPageContainer from '../../ui/AuthPageContainer'
 import Button from '../../ui/Button'
 import InputAuth from '../../ui/InputAuth'
 
 
-const Authentication:FC = () => {
+const Login:FC = () => {
 
-  const {isAuth,error,status} = useAppSelector(state => state.auth)
+  const {error,isAuth} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
   const {
     register,
     formState:{errors},
@@ -23,28 +25,29 @@ const Authentication:FC = () => {
     mode:'onBlur'
   })
 
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (isAuth) {
-      navigate("/")
-    }
-  }, [isAuth])
-  
+
   useEffect(() => {
     dispatch(resetError())
   }, [])
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/")
+      console.log("login")
+    }
+  }, [isAuth])
+  
   
   const authentication:SubmitHandler<authValue> = (data) =>{
     const password = data.password
     const email = data.email
     dispatch(fetchAuthentication({password,email}))
+    navigate("/")
     reset()
   }
+
   return (
-    <AuthPageContainer 
-      title='Authorization' 
-      subtitle='Log in to your account to continue.'
-    >
+    <div>
       <form
         className='flex flex-col items-center gap-4' 
         onSubmit={handleSubmit(authentication)}
@@ -77,8 +80,8 @@ const Authentication:FC = () => {
           <Link to="/registration" className='text-lightBlue dark:text-lightBlue'>Sign up</Link>
         </div>
       </form>
-    </AuthPageContainer>
+    </div>
   )
 }
 
-export default Authentication
+export default Login

@@ -12,7 +12,7 @@ import ChatReducer from "./ChatSlice"
 import UsersReducer from "./UsersSlice"
 import FriendsReducer from "./FriendsSlice"
 import FollowersReducer from "./FollowersSlice"
-import PreloaderReducer from "./PreloaderSlide"
+import PreloaderReducer from "./PreloaderSlice"
 import ThemeReducer from "./ThemeSlice"
 import EditProfileReducer from "./EditProfileSlice"
 import ViewPicturesReducer from "./ViewPicturesSlice"
@@ -22,7 +22,7 @@ import ViewPicturesReducer from "./ViewPicturesSlice"
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","viewPictures"]
+  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","viewPictures","auth"]
 }
 const rootReducer = combineReducers({
   auth:AuthenticationReducer,
