@@ -22,7 +22,7 @@ import ViewPicturesReducer from "./ViewPicturesSlice"
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","viewPictures","auth"]
+  blacklist: ["posts","users","preloader","friends","followers","chats","editProfile","viewPictures"]
 }
 const rootReducer = combineReducers({
   auth:AuthenticationReducer,

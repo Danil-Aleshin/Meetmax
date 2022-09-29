@@ -10,7 +10,7 @@ export const navOptions:INavOptions[] = [
   {
     icon:RectangleGroupIcon,
     title:"Feed",
-    path:"/"
+    path:"/feed"
   },
   {
     icon:ChatBubbleOvalLeftIcon,

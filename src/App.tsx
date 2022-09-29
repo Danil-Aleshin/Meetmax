@@ -9,7 +9,6 @@ import'./App.scss'
 const App:FC = () => {
   
   const {isAuth} = useAppSelector(state=> state.auth)
-  const {isLoading} = useAppSelector(state => state.preloader)
   const {theme} = useAppSelector(state => state.theme)
 
   
@@ -19,14 +18,12 @@ const App:FC = () => {
    root.classList.add(theme)
 
   }, [theme])
-  
-  console.log(isAuth)
-  console.log(isLoading)
+
   return (
     <>
       <div className="container">
           {isAuth 
-            ? isLoading ? <Preloader/> : <Layout/>
+            ? <Layout/>
             : <Auth/>
           }
         </div>

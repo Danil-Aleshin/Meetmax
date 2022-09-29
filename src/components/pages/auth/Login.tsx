@@ -32,8 +32,7 @@ const Login:FC = () => {
 
   useEffect(() => {
     if (isAuth) {
-      navigate("/")
-      console.log("login")
+      navigate("/feed")
     }
   }, [isAuth])
   
@@ -42,7 +41,6 @@ const Login:FC = () => {
     const password = data.password
     const email = data.email
     dispatch(fetchAuthentication({password,email}))
-    navigate("/")
     reset()
   }
 

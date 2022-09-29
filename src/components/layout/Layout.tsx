@@ -1,6 +1,6 @@
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { FC, useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Navigation } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { db } from '../../firebaseConfig'
@@ -15,9 +15,11 @@ import Friends from '../pages/friends/Friends'
 import Home from '../pages/home/Home'
 import Messages from '../pages/messages/Messages'
 import MyCommunity from '../pages/myCommunity/MyCommunity'
+import NotFoundPage from '../pages/NotFoundPage'
 import Profile from '../pages/profile/Profile'
 import Settings from '../pages/settings/Settings'
 import { IChat, IChatData, ICommunity, IProfile, IUserInfo } from '../types/data'
+import Preloader from '../ui/Preloader'
 import Header from './header/Header'
 import Sidebar from './sidebar/Sidebar'
 
@@ -27,11 +29,13 @@ const Layout:FC = () => {
   const {pictures,isActive} = useAppSelector(state => state.viewPictures)
   const {isAuth,userID} = useAppSelector(state=> state.auth)
   const {allUsers} = useAppSelector(state => state.users)
+  const {isLoading} = useAppSelector(state => state.preloader)
   const dispatch = useAppDispatch()
-  dispatch(setIsLoading(true))
+
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    
     const fetchUsers = onSnapshot(
       query(collection(db, "users")),
       (querySnapshot) =>{
@@ -43,8 +47,7 @@ const Layout:FC = () => {
         user.userID === userID && dispatch(getCurrentUser(user))
       )
       dispatch(getAllUsers(usersData))
-      dispatch(setIsLoading(false)) 
-      console.log("first")
+      
     })
 
     return () => {
@@ -124,7 +127,7 @@ const Layout:FC = () => {
           followingData.push(doc.data() as ICommunity);
       });
         dispatch(getFollowing(userProfile(followingData)))
-        
+        dispatch(setIsLoading(false)) 
       })
 
       return () =>{
@@ -137,6 +140,10 @@ const Layout:FC = () => {
       }
   }, [allUsers])
 
+  useEffect(() => {
+    location.pathname === "/" && navigate("/feed")
+  }, [location])
+  
   const closeViewPictures = (e:any) =>{
     if (e.target.id === "viewPicturesWindow") {
       dispatch(setDeactive())
@@ -145,20 +152,23 @@ const Layout:FC = () => {
   
   return (
     <>
-      <div className="table">
+    { isLoading ? <Preloader/>
+      : <div className="table">
         <Sidebar/>
         <Header/>
         <main className={"mainContent"}>
         <Routes>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/feed" element={<Home/>}/>
           <Route path='friends/*' element={<Friends/>}/>
           <Route path='my-community/*' element={<MyCommunity/>}/>
           <Route path='messages/*' element={<Messages/>}/>
           <Route path='settings/*' element={<Settings/>}/>
           <Route path=':id' element={<Profile/>}/>
+          <Route path='/*' element={<NotFoundPage/>}/>
         </Routes>
         </main>
       </div>
+    }
       {isActive && 
         <div 
           id="viewPicturesWindow"
