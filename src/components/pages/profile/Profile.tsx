@@ -217,7 +217,7 @@ const Profile:FC = () => {
             {`${userInfo?.firstName ? userInfo.firstName : "User Not Found"} 
             ${userInfo?.lastName ? userInfo.lastName : ""}`}
           </h1>
-          {userID === id && userInfo ?
+          {userID !== id && userInfo ?
           <div className="flex items-center gap-4 mt-2">
             {isFollowing
               ? <Button title='Unfollow' onClickFunc={unFollowFunc}/>
