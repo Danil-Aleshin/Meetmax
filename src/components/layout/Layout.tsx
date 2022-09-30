@@ -36,26 +36,29 @@ const Layout:FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchUsers = onSnapshot(
-      query(collection(db, "users")),
-      (querySnapshot) =>{
-      const usersData:IUserInfo[] = []
-      querySnapshot.forEach((doc) => {
-        usersData.push(doc.data() as IUserInfo);
-    });
-      usersData.map(user =>
-        user.userID === userID && dispatch(getCurrentUser(user))
-      )
-      dispatch(getAllUsers(usersData))
-      
-    })
-
-    return () => {
-      fetchUsers()
+    if (isAuth) {
+      const fetchUsers = onSnapshot(
+        query(collection(db, "users")),
+        (querySnapshot) =>{
+        const usersData:IUserInfo[] = []
+        querySnapshot.forEach((doc) => {
+          usersData.push(doc.data() as IUserInfo);
+      });
+        usersData.map(user =>
+          user.userID === userID && dispatch(getCurrentUser(user))
+        )
+        dispatch(getAllUsers(usersData))
+        
+      })
+  
+      return () => {
+        fetchUsers()
+      }
     }
   }, [isAuth])
 
   useEffect(() => {
+    if (isAuth) {
       const userProfile = (arr:ICommunity[]):IProfile[] =>{
         const userData:IProfile[] = []
         allUsers.map(user => {
@@ -138,12 +141,9 @@ const Layout:FC = () => {
         fetchFollowing()
         fetchFollowers()
       }
+    }
   }, [allUsers])
 
-  useEffect(() => {
-    location.pathname === "/" && navigate("/feed")
-  }, [location])
-  
   const closeViewPictures = (e:any) =>{
     if (e.target.id === "viewPicturesWindow") {
       dispatch(setDeactive())
@@ -158,13 +158,12 @@ const Layout:FC = () => {
         <Header/>
         <main className={"mainContent"}>
         <Routes>
-          <Route path="/feed" element={<Home/>}/>
+          <Route path="/" element={<Home/>}/>
           <Route path='friends/*' element={<Friends/>}/>
           <Route path='my-community/*' element={<MyCommunity/>}/>
           <Route path='messages/*' element={<Messages/>}/>
           <Route path='settings/*' element={<Settings/>}/>
           <Route path=':id' element={<Profile/>}/>
-          <Route path='/*' element={<NotFoundPage/>}/>
         </Routes>
         </main>
       </div>

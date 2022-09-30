@@ -72,7 +72,11 @@ export const fetchRegistration = createAsyncThunk<any,propsFetchRegistration,{re
         firstName:firstName,
         lastName:lastName,
         gender:gender,
-        profileImg:"",
+        profileImg:{
+          name:"noProfileImg.png",
+          link:"https://firebasestorage.googleapis.com/v0/b/meetmax-ada29.appspot.com/o/profileImages%2FnoProfileImg.png?alt=media&token=6341de6b-8d67-4cc5-a300-4642d45d6bf0",
+          path:""
+        },
         location:"",
         phoneNumber:phoneNumber,
       })

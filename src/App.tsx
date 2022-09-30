@@ -1,10 +1,12 @@
 import {FC, useEffect} from 'react'
-import Preloader from './components/ui/Preloader'
 import './components/ui/SwiperMainStyles.scss'
-import Auth from './components/pages/auth/Auth'
 import Layout from './components/layout/Layout'
 import { useAppSelector } from './components/hooks/appRedux'
 import'./App.scss'
+import { Route, Routes } from 'react-router-dom'
+import Registration from './components/pages/auth/Registration'
+import Login from './components/pages/auth/Login'
+import RequireAuth from './components/hoc/RequierAuth'
 
 const App:FC = () => {
   
@@ -19,13 +21,26 @@ const App:FC = () => {
 
   }, [theme])
 
+  useEffect(() => {
+    if (!isAuth) {
+      document.body.style.overflow = "auto"
+    }else{
+      document.body.style.overflow = "hidden"
+    }
+  }, [isAuth])
+  
   return (
     <>
       <div className="container">
-          {isAuth 
-            ? <Layout/>
-            : <Auth/>
-          }
+        <Routes>
+          <Route path='/*' element={
+          <RequireAuth>
+            <Layout/>
+          </RequireAuth>
+        }/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/registration' element={<Registration/>}/>
+        </Routes>
         </div>
     </>
   )

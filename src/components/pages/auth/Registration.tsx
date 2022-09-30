@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { fetchRegistration, resetError } from '../../../store/AuthenticationSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux';
 import { authValue } from '../../types/data';
+import AuthPageContainer from '../../ui/AuthPageContainer';
 import Button from '../../ui/Button';
 import InputAuth from '../../ui/InputAuth';
 import RadioBtn from '../../ui/radioBtn/RadioBtn';
@@ -15,6 +16,7 @@ import RadioBtn from '../../ui/radioBtn/RadioBtn';
 const Registration:FC = () => {
 
   const [gender, setGender] = useState("male")
+  const {isAuth} = useAppSelector(state => state.auth)
 
   const {
     register,
@@ -31,6 +33,13 @@ const Registration:FC = () => {
   useEffect(() => {
     dispatch(resetError())
   }, [])
+
+  
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/")
+    }
+  }, [isAuth])
   
   const registration:SubmitHandler<authValue> = (data) =>{
     const email = data.email
@@ -43,8 +52,9 @@ const Registration:FC = () => {
     reset()
     navigate("/login")
   }
+
   return (
-    <div>
+    <AuthPageContainer subtitle='Create an account to continue and connect with people.' title='Getting Started'>
       <form className='flex flex-col items-center gap-4' onSubmit={handleSubmit(registration)}>
         <InputAuth 
           Icon={AtSymbolIcon} 
@@ -107,7 +117,7 @@ const Registration:FC = () => {
         </div>
 
       </form>
-    </div>
+    </AuthPageContainer>
   )
 }
 

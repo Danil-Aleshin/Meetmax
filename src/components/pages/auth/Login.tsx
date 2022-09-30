@@ -6,6 +6,7 @@ import { fetchAuthentication, resetError } from '../../../store/AuthenticationSl
 import { setIsLoading } from '../../../store/PreloaderSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { authValue } from '../../types/data'
+import AuthPageContainer from '../../ui/AuthPageContainer'
 import Button from '../../ui/Button'
 import InputAuth from '../../ui/InputAuth'
 
@@ -32,7 +33,7 @@ const Login:FC = () => {
 
   useEffect(() => {
     if (isAuth) {
-      navigate("/feed")
+      navigate("/")
     }
   }, [isAuth])
   
@@ -45,7 +46,7 @@ const Login:FC = () => {
   }
 
   return (
-    <div>
+    <AuthPageContainer subtitle='Log in to your account to continue.' title='Authorization'>
       <form
         className='flex flex-col items-center gap-4' 
         onSubmit={handleSubmit(authentication)}
@@ -71,14 +72,14 @@ const Login:FC = () => {
           regExp={/(?=^.{1,}$)/}
           regExpError={"Enter valid password"}
         />
-        {error && <p className='text-red text-sm'>Wrong login or password</p>}
+        {error && <p className='text-red text-sm dark:text-red'>Wrong login or password</p>}
         <Button title='Sign in' className='w-full'/>
         <div className="flex gap-4">
           <p>No account?</p>
           <Link to="/registration" className='text-lightBlue dark:text-lightBlue'>Sign up</Link>
         </div>
       </form>
-    </div>
+    </AuthPageContainer>
   )
 }
 
