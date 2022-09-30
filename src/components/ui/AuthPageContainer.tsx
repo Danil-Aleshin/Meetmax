@@ -8,7 +8,7 @@ interface propsAuthPageContainer{
 }
 const AuthPageContainer:FC<propsAuthPageContainer> = ({children,subtitle,title}) => {
   return (
-    <div>
+    <div className=''>
       <header className='p-3 flex items-center justify-between'> 
         <MainLogo/>
         <select className="py-1.5 px-5 rounded-md cursor-pointer outline-none bg-lightGray dark:bg-darkBlue">

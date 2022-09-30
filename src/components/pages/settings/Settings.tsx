@@ -1,6 +1,5 @@
 import { FC } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import RequireAuth from '../../hoc/RequireAuth'
 import ContentBlock from '../../ui/ContentBlock'
 import { settingsList, settingsRoutes } from './SettingsData'
 import SettingsItem from './SettingsItem'
@@ -23,10 +22,7 @@ const Settings:FC = () => {
                 <Route
                  path={route.path}
                  key={route.path}
-                 element={route.auth
-                  ? <RequireAuth><route.component/></RequireAuth> 
-                  : <route.component/>
-                }
+                 element={<route.component/>}
                 />
               )}
             </Routes>

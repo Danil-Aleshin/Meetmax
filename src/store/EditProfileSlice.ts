@@ -64,7 +64,9 @@ export const changeProfileImg = createAsyncThunk<any,propsChangeProfileImg,{reje
             photoURL:downloadURL
           })
         }
-        deleteObject(ref(storage, `${currentImg.path}/${currentImg.name}`))
+        if (currentImg.name !== "noProfileImg.png") {
+          deleteObject(ref(storage, `${currentImg.path}/${currentImg.name}`))
+        }
       });
     })
       

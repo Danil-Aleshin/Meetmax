@@ -18,6 +18,7 @@ import ContentBlock from '../../ui/ContentBlock'
 import './Profile.scss'
 
 
+
 const Profile:FC = () => {
   const [userInfo, setUserInfo] = useState<IUserInfo>()
 
@@ -40,7 +41,6 @@ const Profile:FC = () => {
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
-
   useEffect(() => {
 
     const uid = id ? id : ""
@@ -213,8 +213,11 @@ const Profile:FC = () => {
             </>
             }
           </div>
-          <h1 className='text-2xl'>{`${userInfo?.firstName} ${userInfo?.lastName}`}</h1>
-          {userID === id ||
+          <h1 className='text-2xl'>
+            {`${userInfo?.firstName ? userInfo.firstName : "User Not Found"} 
+            ${userInfo?.lastName ? userInfo.lastName : ""}`}
+          </h1>
+          {userID === id && userInfo ?
           <div className="flex items-center gap-4 mt-2">
             {isFollowing
               ? <Button title='Unfollow' onClickFunc={unFollowFunc}/>
@@ -247,6 +250,7 @@ const Profile:FC = () => {
           }
           <ChatBubbleOvalLeftEllipsisIcon className='icon w-6 cursor-pointer' onClick={()=>startAChatFunc()}/>
         </div>
+          : null
         }
         </div>
           <Intro

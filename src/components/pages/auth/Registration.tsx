@@ -16,6 +16,7 @@ import RadioBtn from '../../ui/radioBtn/RadioBtn';
 const Registration:FC = () => {
 
   const [gender, setGender] = useState("male")
+  const {isAuth} = useAppSelector(state => state.auth)
 
   const {
     register,
@@ -27,22 +28,19 @@ const Registration:FC = () => {
   })
 
   const dispatch = useAppDispatch()
-  const {isAuth} = useAppSelector(state => state.auth)
   const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(resetError())
   }, [])
+
   
-
-
   useEffect(() => {
     if (isAuth) {
       navigate("/")
     }
   }, [isAuth])
-
-
+  
   const registration:SubmitHandler<authValue> = (data) =>{
     const email = data.email
     const password = data.password
@@ -54,8 +52,9 @@ const Registration:FC = () => {
     reset()
     navigate("/login")
   }
+
   return (
-    <AuthPageContainer title="Getting Started" subtitle="Create an account to continue and connect with people.">
+    <AuthPageContainer subtitle='Create an account to continue and connect with people.' title='Getting Started'>
       <form className='flex flex-col items-center gap-4' onSubmit={handleSubmit(registration)}>
         <InputAuth 
           Icon={AtSymbolIcon} 

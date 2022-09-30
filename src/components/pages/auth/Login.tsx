@@ -3,6 +3,7 @@ import { FC, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchAuthentication, resetError } from '../../../store/AuthenticationSlice'
+import { setIsLoading } from '../../../store/PreloaderSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
 import { authValue } from '../../types/data'
 import AuthPageContainer from '../../ui/AuthPageContainer'
@@ -10,10 +11,12 @@ import Button from '../../ui/Button'
 import InputAuth from '../../ui/InputAuth'
 
 
-const Authentication:FC = () => {
+const Login:FC = () => {
 
-  const {isAuth,error,status} = useAppSelector(state => state.auth)
+  const {error,isAuth} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
   const {
     register,
     formState:{errors},
@@ -23,16 +26,17 @@ const Authentication:FC = () => {
     mode:'onBlur'
   })
 
-  const navigate = useNavigate()
+
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
+
   useEffect(() => {
     if (isAuth) {
       navigate("/")
     }
   }, [isAuth])
   
-  useEffect(() => {
-    dispatch(resetError())
-  }, [])
   
   const authentication:SubmitHandler<authValue> = (data) =>{
     const password = data.password
@@ -40,11 +44,9 @@ const Authentication:FC = () => {
     dispatch(fetchAuthentication({password,email}))
     reset()
   }
+
   return (
-    <AuthPageContainer 
-      title='Authorization' 
-      subtitle='Log in to your account to continue.'
-    >
+    <AuthPageContainer subtitle='Log in to your account to continue.' title='Authorization'>
       <form
         className='flex flex-col items-center gap-4' 
         onSubmit={handleSubmit(authentication)}
@@ -70,7 +72,7 @@ const Authentication:FC = () => {
           regExp={/(?=^.{1,}$)/}
           regExpError={"Enter valid password"}
         />
-        {error && <p className='text-red text-sm'>Wrong login or password</p>}
+        {error && <p className='text-red text-sm dark:text-red'>Wrong login or password</p>}
         <Button title='Sign in' className='w-full'/>
         <div className="flex gap-4">
           <p>No account?</p>
@@ -81,4 +83,4 @@ const Authentication:FC = () => {
   )
 }
 
-export default Authentication
+export default Login
