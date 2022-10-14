@@ -1,4 +1,4 @@
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from 'firebase/firestore'
 import {FC, useEffect, useState} from 'react'
 import { db } from '../../../firebaseConfig'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
@@ -11,32 +11,21 @@ const Home:FC = () => {
   
   const [posts, setPosts] = useState<IPost[]>([])
   
-  const {currentUserFollowing} = useAppSelector(state => state.followers)
-  const {allUsers} = useAppSelector(state => state.users)
-
 
   useEffect(() => {
-    onSnapshot(query(collection(db, "global", "posts","data")),
+    onSnapshot(query(collection(db, "global", "posts","data"),orderBy("date",'desc')),
     (querySnapshot) =>{
       let postsData:IPost[] = []
       querySnapshot.forEach((doc
         ) => {
         postsData.push(doc.data() as IPost)
       });
-      allUsers.map(user => {
-        postsData = postsData.map(post=>
-          user.userID === post.authorID
-            ? {...post, userInfo:user}
-            : post
-        )
-      })
-      postsData.sort((a,b) => a.date > b.date ? -1 : 1)
       setPosts(postsData)
     })
 
-  }, [allUsers,currentUserFollowing])
+  }, [])
 
-
+  
   return (
     <div className='w-full flex flex-col gap-7'>
       <CreatePostForm/>

@@ -1,32 +1,39 @@
+import { UserPlusIcon } from '@heroicons/react/24/outline'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
+import useProfile from '../../hooks/requestsHooks/useProfile'
 import { userID } from '../../types/data'
 import UserImg from '../../ui/UserImg'
 
 interface propsFriendsCard{
-  userID:userID,
-  profileImg:string,
-  firstName:string,
-  lastName:string,
+  netWorkUserID:userID,
+  addToFriendFunc?:(networkUserID:userID)=>void
 }
 
 const FriendsCard:FC<propsFriendsCard> = ({
-  firstName,
-  lastName,
-  profileImg,
-  userID
+  netWorkUserID,
+  addToFriendFunc
 }) => {
-  return (
+  const {userInfo} = useProfile(netWorkUserID)
+
+  return !userInfo ? null :(
     <li className='flex items-center justify-between'>
-      <Link to={`/${userID}`} className="flex gap-3 items-center">
+      <Link to={`/${netWorkUserID}`} className="flex gap-3 items-center">
         <UserImg
           width='36'
           className='h-9'
-          src={profileImg}
+          src={userInfo?.profileImg.link}
         />
-        <p>{firstName + " " + lastName}</p>
+        <p>{`${userInfo?.firstName} ${userInfo?.lastName}`}</p>
       </Link>
-      <p className='text-xs text-superLightGray'>2min</p>
+      {
+        addToFriendFunc 
+          ? <UserPlusIcon 
+            className='icon w-5.5 cursor-pointer' 
+            onClick={()=>addToFriendFunc(netWorkUserID)}
+          /> 
+          : <p className='text-xs text-superLightGray'>2min</p>
+      }
     </li>
   )
 }

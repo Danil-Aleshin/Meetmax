@@ -20,21 +20,21 @@ export interface IUserInfo{
   profileImg:IFile,
   phoneNumber:number,
 }
-export interface IChatData{
-  favorite:false,
-  companionID:userID
-  messages:IMessage[]
-}
-
 export interface IChat{
-  userInfo:IUserInfo,
-  chat:IChatData
+  options:IChatOptions
+  messages:IMessage[],
+  userInfo?:IUserInfo
+}
+export interface IChatOptions{
+  companionID:userID
+  favorite:boolean,
+
 }
 
 export interface IMessage{
   id:string,
   fromUserID:userID,
-  date:Date,
+  date:Timestamp,
   text:string,
   state:"read" | "unread",
   imgs:IFile[]
@@ -45,15 +45,14 @@ export interface IPost{
   id:string,
   authorID:userID,
   text:string,
-  date:Date,
+  date:Timestamp,
   imgs:IFile[],
   likes:userID[],
   comments:IComment[],
-  // reports:[],
 }
 
 export interface IComment{
-  date:Date,
+  date:Timestamp,
   authorID:userID,
   text:string,
   imgs:IFile[]

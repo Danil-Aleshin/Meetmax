@@ -39,4 +39,4 @@ const useDate = (d:any) => { // type for method toDate() === "Timestamp" in fire
   }
 }
 
-export default useDate
+// export default useDate

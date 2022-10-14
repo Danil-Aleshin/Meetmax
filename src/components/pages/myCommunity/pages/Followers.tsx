@@ -1,22 +1,21 @@
 import { FC } from 'react'
 import { useAppSelector } from '../../../hooks/appRedux'
-import ProfileCard from '../../../ui/ProfileCard'
+import useFollowers from '../../../hooks/requestsHooks/useFollowers'
+import ProfileCard from '../../../ui/profileCard/ProfileCard'
 
 interface propsFollowers{
 
 }
 const Followers:FC<propsFollowers> = ({}) => {
 
-  const {currentUserFollowers} = useAppSelector(state => state.followers)
+  const {userID} = useAppSelector(state => state.auth)
+  const {followers} = useFollowers(userID)
   return (
     <>
-      {currentUserFollowers.map(item=>
+      {followers.map(item=>
         <ProfileCard
           key={item.userID}
-          firstName={item.userInfo.firstName}
-          followerID={item.userInfo.userID}
-          lastName={item.userInfo.lastName}
-          profileImg={item.userInfo.profileImg}
+          netWorkUserID={item.userID}
         />
       )}
     </>

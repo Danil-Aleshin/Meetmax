@@ -3,11 +3,14 @@ import React, { FC, memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { setActive } from '../../../store/ViewPicturesSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
-import useDate from '../../hooks/useDate'
+import useProfile from '../../hooks/requestsHooks/useProfile'
+
 import { IComment, IFile, IUserInfo } from '../../types/data'
+import { timeToTimeAgo } from '../../utils/convertDate'
 import OptionsMenu from '../optionsMenu/OptionsMenu'
 import OptionsMenuItem from '../optionsMenu/OptionsMenuItem'
 import UserImg from '../UserImg'
+import UserInfo from '../userInfo/UserInfo'
 
 interface propsCommentCard extends IComment{
   removeCommentFunc:()=>void
@@ -21,21 +24,11 @@ const CommentCard:FC<propsCommentCard> = memo(({
 }) => {
 
   const [optionsMenuActive, setOptionsMenuActive] = useState(false)
-  const [userInfo, setUserInfo] = useState<IUserInfo>()
 
-  const {allUsers} = useAppSelector(state => state.users)
   const {userID} = useAppSelector(state => state.auth)
   const dispatch =  useAppDispatch()
 
-  const commentDate = useDate(date)
-
-  useEffect(() => {
-    allUsers.map(user => {
-      if(user.userID === authorID){
-        setUserInfo(user)
-      }
-    })
-  }, [allUsers])
+  const {userInfo} = useProfile(authorID)
 
   const viewPictures = (img:IFile) =>{
     const viewPhotoArr = imgs.filter(item => item.name !== img.name)
@@ -44,27 +37,17 @@ const CommentCard:FC<propsCommentCard> = memo(({
 
   return (
     <li className='flex justify-between'>
-      <div className="flex gap-4">
-        <Link to={`/${userInfo?.userID}`} className="flex-shrink-0">
-          <UserImg
-            src={userInfo?.profileImg.link}
-            width={"38"}
-            className="h-9.5"
-          />
-        </Link>
-        <div className="flex flex-col gap-0.5">
-          <Link to={`/${userInfo?.userID}`}>
-            <p className="text-sm">{`${userInfo?.firstName} ${userInfo?.lastName}`}</p>
-          </Link>
-          <p className="text-xs opacity-80 font-normal">{`${commentDate.time} ${commentDate.day}.${commentDate.month}.${commentDate.year}`}</p>
-          {imgs &&
+      <div className="flex flex-col gap-1">
+        <UserInfo date={date} userInfo={userInfo}/>
+        <div className="flex flex-col gap-0.5 ml-12.5">
+          {imgs.length > 0 &&
             <div className="mt-2 max-w-sm">
               {imgs.map(img => 
                 <img src={img.link} alt="" onClick={()=>viewPictures(img)} className='cursor-pointer'/>
               )}
             </div>
           }
-          <p className="text-sm  mt-1.5">{text}</p>
+          <p className="text-sm  mt-0.3">{text}</p>
         </div>
       </div>
       <div className="">

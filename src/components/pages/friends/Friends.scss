@@ -1,0 +1,13 @@
+.friendsPageTitle {
+  @apply w-fit h-11 border border-superLightGray dark:border-inputBorderBlue rounded-xl flex items-center justify-center cursor-pointer transition-colors duration-300;
+
+  &.page--active {
+    @apply bg-lightBlue;
+    .text {
+      @apply text-white;
+    }
+  }
+  .text {
+    @apply px-5  transition-colors duration-300 md:px-16;
+  }
+}

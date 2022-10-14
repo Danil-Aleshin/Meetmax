@@ -1,40 +1,41 @@
 import { CakeIcon, MapPinIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { Timestamp } from 'firebase/firestore'
 import { FC, memo } from 'react'
-import useDate from '../../hooks/useDate'
+import { IUserInfo } from '../../../types/data'
+import { convertDate } from '../../../utils/convertDate'
+import Loader from './Loader'
+
 
 interface propsIntro{
-  dateOfBirthday?:Timestamp,
   followers:number,
   following:number,
-  location?:string,
   friends:number,
+  userInfo?:IUserInfo
 }
 
 const Intro:FC<propsIntro> = memo(({
-  dateOfBirthday,
   followers,
   following,
-  location,
-  friends
+  friends,
+  userInfo
 }) => {
 
-  const date = useDate(dateOfBirthday)
+  const date = convertDate("dd/MM/yyyy",userInfo?.dateOfBirthday)
 
-  return (
+  return !userInfo ? <Loader/> :(
     <div className='h-fit'>
       <div className='flex flex-col gap-4'>
         <ul className='flex flex-col gap-2'>
-          {dateOfBirthday &&
+          {userInfo.dateOfBirthday &&
             <li className='flex gap-5 items-center'>
               <CakeIcon className='w-5'/>
-              <p>{date.date}</p>
+              <p>{date}</p>
             </li>
           }
-          {location &&
+          {userInfo.location &&
             <li className='flex gap-5 items-center'>
               <MapPinIcon className='w-5'/>
-              <p>{location}</p>
+              <p>{userInfo.location}</p>
             </li>
           }
           <li className='flex gap-5 items-center'>
@@ -48,9 +49,6 @@ const Intro:FC<propsIntro> = memo(({
             <p>{following} Following</p>
           </li>
         </ul>
-        {/* <Link to="/settings/edit-profile" className='py-2 px-12 bg-lightGray dark:bg-darkBlue rounded-lg text-center'>
-          Edit Details
-        </Link> */}
       </div>
     </div>
   )

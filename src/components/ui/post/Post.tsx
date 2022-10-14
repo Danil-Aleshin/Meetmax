@@ -1,14 +1,12 @@
-import { TrashIcon, UserMinusIcon} from '@heroicons/react/24/outline'
-import { serverTimestamp } from 'firebase/firestore'
-import React, { FC, memo, useEffect, useState } from 'react'
+import { TrashIcon} from '@heroicons/react/24/outline'
+import { Timestamp } from 'firebase/firestore'
+import { FC, memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { unfollow } from '../../../store/FollowersSlice'
-import { fetchCreatePost, fetchRemovePost, removeComment, removeLike, sendLike, writeAComment } from '../../../store/PostsSlice'
+import { fetchRemovePost, removeComment, removeLike, sendLike, writeAComment } from '../../../store/PostsSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
-import useDate from '../../hooks/useDate'
 import useInput from '../../hooks/useInput'
-import { IComment, IFile, IPost, IUserInfo, userID } from '../../types/data'
+import { IComment, IFile, IPost } from '../../types/data'
 import AddMessageForm from '../AddMessageForm'
 import ContentBlock from '../ContentBlock'
 import OptionsMenu from '../optionsMenu/OptionsMenu'
@@ -16,12 +14,15 @@ import OptionsMenuItem from '../optionsMenu/OptionsMenuItem'
 import SoicalActivity from '../SoicalActivity'
 import UserImg from '../UserImg'
 import CommentCard from './CommentCard'
-import { Navigation,Pagination } from 'swiper';
+import { Navigation } from 'swiper';
 import "./Post.scss"
 import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination'
 import { setActive } from '../../../store/ViewPicturesSlice';
+import useProfile from '../../hooks/requestsHooks/useProfile';
+import { timeToTimeAgo } from '../../utils/convertDate';
+import UserInfo from '../userInfo/UserInfo';
 
 
 
@@ -38,7 +39,6 @@ const Post:FC<propsPost> = memo(({
     id,
     likes,
     imgs,
-    userInfo,
   },
   post,
 }) => {
@@ -48,19 +48,22 @@ const Post:FC<propsPost> = memo(({
   const [isLike, setIsLike] = useState(false)
   const [filesAttachment, setFilesAttachment] = useState<IFile[]>([])
   
-  const {currentUser,currentUser:{userID},allUsers} = useAppSelector(state => state.users)
+  const {hostUser:{
+    userID,
+    profileImg
+  }} = useAppSelector(state => state.auth)
   
   const dispatch = useAppDispatch()
-  
-  const postDate = useDate(date)
 
+  const {userInfo} = useProfile(authorID)
+  const postDate = timeToTimeAgo(date)
 
   useEffect(() => {
     setIsLike(false)
     likes.map(like =>{
       like === userID && setIsLike(true)
     })
-  }, [currentUser,likes])
+  }, [likes])
   
   const addComment = ()=>{
     const commentText = comment.value
@@ -71,7 +74,7 @@ const Post:FC<propsPost> = memo(({
     if (commentText.length !== 0 || filesAttachment) {
       const newComment:IComment = {
         authorID:commentAuthorID,
-        date:new Date,
+        date:Timestamp.fromDate(new Date),
         text:commentText,
         imgs:filesAttachment
       }  
@@ -121,17 +124,7 @@ const Post:FC<propsPost> = memo(({
       <>
       {/* header post */}
         <div className="flex justify-between items-center">
-          <Link to={`/${authorID}`} className="author">
-            <UserImg
-                src={userInfo?.profileImg.link}
-                width={"48"}
-                className="h-12"
-              />
-            <div className="flex flex-col gap-0.5">
-              <p>{`${userInfo?.firstName} ${userInfo?.lastName}`}</p>
-              <span className='text-xs font-normal'>{`${postDate.time} ${postDate.day}.${postDate.month}.${postDate.year}`}</span>
-            </div>
-          </Link>
+          <UserInfo date={date} userInfo={userInfo}/>
           {authorID === userID 
             && <OptionsMenu 
                   setIsActive={setOptionsMenuActive} 
@@ -139,7 +132,7 @@ const Post:FC<propsPost> = memo(({
                   className='top-7 -right-2'
                 >
             <>
-              {authorID === currentUser.userID &&
+              {authorID === userID &&
                 <OptionsMenuItem
                   title='Delete post'
                   Icon={TrashIcon}
@@ -203,9 +196,9 @@ const Post:FC<propsPost> = memo(({
           </ul>
         }
         <div className="add-comment">
-        <Link to={`/${userID}`}>
+        <Link to={`/${userID}`} className="self-start">
           <UserImg
-            src={currentUser.profileImg.link}
+            src={profileImg.link}
             width="38"
             className='h-9.5'
           />

@@ -24,9 +24,10 @@ const AboutUserMenu:FC<propsAboutUserMenu> = ({
   chatCompanionID
 }) => {
 
-  const {currentUser:{userID}} = useAppSelector(state => state.users)
-  const dispatch = useAppDispatch()
+  
+  const {userID} = useAppSelector(state => state.auth)
 
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const changeFavoriteStatus = () =>{

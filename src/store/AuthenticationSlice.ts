@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserCredential } from 'firebase/auth'
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserCredential } from 'firebase/auth'
+import { doc, setDoc } from "firebase/firestore";
 import { authValue, IUserData, IUserInfo, userID } from "../components/types/data";
 import { auth, db } from "../firebaseConfig";
 
 interface stateAuthentication{
+  hostUser:IUserInfo
   isAuth:boolean,
   loading:boolean,
   error:boolean,
@@ -23,6 +24,7 @@ interface propsFetchRegistration extends authValue{
 
 //state
 const initialState:stateAuthentication = {
+  hostUser: {} as IUserInfo,
   isAuth: false,
   loading:false,
   error:false,
@@ -110,6 +112,9 @@ const AuthenticationSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    getHostUser(state,action:PayloadAction<IUserInfo>){
+      state.hostUser = action.payload
+    },
     resetError(state){
       state.error = false
       state.status = ""
@@ -145,6 +150,7 @@ const AuthenticationSlice = createSlice({
       })
       .addCase(fetchSignOut.fulfilled,(state)=>{
         state.userID = ""
+        state.hostUser = {} as IUserInfo
         state.isAuth = false
         state.loading = false
         state.status = "signOut fulfilled"
@@ -157,6 +163,6 @@ const AuthenticationSlice = createSlice({
   }
 
 })
-export const {resetError} = AuthenticationSlice.actions
+export const {resetError,getHostUser} = AuthenticationSlice.actions
 
 export default AuthenticationSlice.reducer

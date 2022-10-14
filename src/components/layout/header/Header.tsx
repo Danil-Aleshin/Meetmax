@@ -14,11 +14,12 @@ const Header:FC = () => {
 
   const [optionsMenuActive, setOptionsMenuActive] = useState(false)
 
-  const {currentUser} = useAppSelector(state => state.users)
+  const {hostUser} = useAppSelector(state => state.auth)
+
   const dispatch = useAppDispatch()
 
 
-  const optionsMenuBtn = useRef<any>(null)
+  const optionsMenuBtn = useRef<HTMLDivElement>(null)
   
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const Header:FC = () => {
 
   const closeOptionsMenu = (e:any) =>{
 
-    if (!optionsMenuBtn.current.contains(e.target)
+    if (!optionsMenuBtn.current?.contains(e.target)
     && e.target.id !== "profileBlock") {
       setOptionsMenuActive(false)
     }
@@ -54,7 +55,7 @@ const Header:FC = () => {
           window.screen.width > 600 &&
           <InputText 
             Icon={MagnifyingGlassIcon}
-            placeholder='Search for something here...'
+            placeholder='Search for something here... (DntWrk)'
             className='global-search'
             value={search.value}
             onChange={search.onChange}
@@ -70,7 +71,7 @@ const Header:FC = () => {
       >
         <div>
         <UserImg
-          src={currentUser.profileImg.link}
+          src={hostUser.profileImg.link}
           width={"40"}
           className="h-10"
         />
@@ -83,15 +84,15 @@ const Header:FC = () => {
           <ul className='flex flex-col gap-3.5'>
             <li className='w-39'>
               <Link 
-                to={`/${currentUser.userID}`} 
+                to={`/${hostUser.userID}`} 
                 className='flex gap-2 items-center'
               >
                 <UserImg
-                  src={currentUser.profileImg.link}
+                  src={hostUser.profileImg.link}
                   width={"40"}
                   className="h-10"
                 />
-                <p>{currentUser.firstName + " " +currentUser.lastName}</p>
+                <p>{`${hostUser.firstName} ${hostUser.lastName}`}</p>
               </Link>
             </li>
             <li onClick={()=>logout()} className='flex gap-2 items-center'>

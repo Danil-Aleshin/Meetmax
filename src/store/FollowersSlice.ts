@@ -5,23 +5,19 @@ import { db } from "../firebaseConfig";
 
 
 interface followersState{
-  currentUserFollowers:IProfile[],
-  currentUserFollowing:IProfile[],
   loading:boolean,
   error:boolean,
   status?:string,
 }
 interface propsFollow{
   userID:userID,
-  followerID:userID,
+  networkUserID:userID,
 }
 interface propsUnFollow{
   userID:userID,
-  followerID:userID,
+  networkUserID:userID,
 }
 const initialState:followersState = {
-  currentUserFollowers:[],
-  currentUserFollowing:[],
   loading:false,
   error:false,
   status:"",
@@ -29,13 +25,13 @@ const initialState:followersState = {
 
 export const follow = createAsyncThunk<any,propsFollow,{rejectValue:string}>(
   "followers/follow",
-  async function({userID,followerID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
 
     try {
-      await setDoc(doc(db,"following", userID,"data",followerID),{
-        userID:followerID,
+      await setDoc(doc(db,"following", userID,"data",networkUserID),{
+        userID:networkUserID,
       });
-      await setDoc(doc(db,"followers",followerID,"data",userID),{
+      await setDoc(doc(db,"followers",networkUserID,"data",userID),{
         userID:userID,
       });
     } catch (error) {
@@ -47,11 +43,11 @@ export const follow = createAsyncThunk<any,propsFollow,{rejectValue:string}>(
 
 export const unfollow = createAsyncThunk<any,propsUnFollow,{rejectValue:string}>(
   "followers/unfollow",
-  async function({userID,followerID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
     const id = Date.now().toString()
     try {
-      await deleteDoc(doc(db,"following", userID,"data",followerID))
-      await deleteDoc(doc(db,"followers",followerID,"data",userID))
+      await deleteDoc(doc(db,"following", userID,"data",networkUserID))
+      await deleteDoc(doc(db,"followers",networkUserID,"data",userID))
 
     } catch (error) {
       console.log(error)
@@ -63,14 +59,7 @@ export const unfollow = createAsyncThunk<any,propsUnFollow,{rejectValue:string}>
 const FollowersSlice = createSlice({
   name: "followers",
   initialState,
-  reducers: {
-    getFollowers(state,action:PayloadAction<IProfile[]>){
-      state.currentUserFollowers = action.payload
-    },
-    getFollowing(state,action:PayloadAction<IProfile[]>){
-      state.currentUserFollowing = action.payload
-    }
-  },
+  reducers: {},
   extraReducers:(builder) =>{
     builder
       .addCase(follow.pending,(state)=>{
@@ -108,6 +97,6 @@ const FollowersSlice = createSlice({
 
 })
 
-export const {getFollowers,getFollowing} = FollowersSlice.actions
+export const {} = FollowersSlice.actions
 
 export default FollowersSlice.reducer

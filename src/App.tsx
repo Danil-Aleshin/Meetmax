@@ -13,7 +13,6 @@ const App:FC = () => {
   const {isAuth} = useAppSelector(state=> state.auth)
   const {theme} = useAppSelector(state => state.theme)
 
-  
   useEffect(() => {
    const root = window.document.documentElement
    root.className = ""

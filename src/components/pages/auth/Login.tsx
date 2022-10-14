@@ -34,6 +34,7 @@ const Login:FC = () => {
   useEffect(() => {
     if (isAuth) {
       navigate("/")
+      dispatch(setIsLoading(true))
     }
   }, [isAuth])
   

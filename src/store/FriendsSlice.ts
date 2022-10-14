@@ -5,33 +5,26 @@ import { db } from "../firebaseConfig";
 
 
 interface friendsState{
-  currentUserFriends:IProfile[],
-  currentUserFriendRequests:IProfile[],
-  myFriendRequests:IProfile[],
   loading:boolean,
   error:boolean,
   status?:string,
 }
 interface propsAddToFriends{
   userID:userID,
-  newFriendID:userID,
+  networkUserID:userID,
 }
 
 const initialState:friendsState = {
-  currentUserFriends:[],
-  currentUserFriendRequests:[],
-  myFriendRequests:[],
   loading:false,
   error:false,
   status:"",
 }
 export const friendRequest = createAsyncThunk<any,propsAddToFriends,{rejectValue:string}>(
   "friends/friendRequest",
-  async function({userID,newFriendID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
     try {
-      console.log(newFriendID,userID)
-      await setDoc(doc(db,"friends", newFriendID,"friendRequests",userID),{userID});
-      await setDoc(doc(db,"friends", userID,"myFriendRequests",newFriendID),{userID:newFriendID});
+      await setDoc(doc(db,"friendRequests", networkUserID,"data",userID),{userID});
+      await setDoc(doc(db,"myFriendRequests", userID,"data",networkUserID),{userID:networkUserID});
     } catch (error) {
       console.log(error)
       return rejectWithValue("error send friend requests")
@@ -41,15 +34,14 @@ export const friendRequest = createAsyncThunk<any,propsAddToFriends,{rejectValue
 
 export const addToFriends = createAsyncThunk<any,propsAddToFriends,{rejectValue:string}>(
   "friends/addToFriends",
-  async function({userID,newFriendID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
     try {
-      await deleteDoc(doc(db,"friends", newFriendID,"myFriendRequests",userID));
-      await deleteDoc(doc(db,"friends", userID,"friendRequests",newFriendID));
-
-      await setDoc(doc(db,"friends", userID,"data",newFriendID),{
-        userID:newFriendID
+      await deleteDoc(doc(db,"myFriendRequests", networkUserID,"data",userID));
+      await deleteDoc(doc(db,"friendRequests", userID,"data",networkUserID));
+      await setDoc(doc(db,"friends", userID,"data",networkUserID),{
+        userID:networkUserID
       });
-      await setDoc(doc(db,"friends", newFriendID,"data",userID),{
+      await setDoc(doc(db,"friends", networkUserID,"data",userID),{
         userID
       });
     } catch (error) {
@@ -61,10 +53,10 @@ export const addToFriends = createAsyncThunk<any,propsAddToFriends,{rejectValue:
 
 export const removeFriendRequest = createAsyncThunk<any,propsAddToFriends,{rejectValue:string}>(
   "friends/removeFriendRequest",
-  async function({userID,newFriendID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
     try {
-      await deleteDoc(doc(db,"friends", newFriendID,"friendRequests",userID));
-      await deleteDoc(doc(db,"friends", userID,"myFriendRequests",newFriendID));
+      await deleteDoc(doc(db,"friendRequests", networkUserID,"data",userID));
+      await deleteDoc(doc(db,"myFriendRequests", userID,"data",networkUserID));
     } catch (error) {
       console.log(error)
       return rejectWithValue("error remove friend requests")
@@ -74,10 +66,10 @@ export const removeFriendRequest = createAsyncThunk<any,propsAddToFriends,{rejec
 
 export const removeFromFriends = createAsyncThunk<any,propsAddToFriends,{rejectValue:string}>(
   "friends/removeFromFriends",
-  async function({userID,newFriendID},{rejectWithValue}){
+  async function({userID,networkUserID},{rejectWithValue}){
     try {
-      await deleteDoc(doc(db,"friends", newFriendID,"data",userID));
-      await deleteDoc(doc(db,"friends", userID,"data",newFriendID));
+      await deleteDoc(doc(db,"friends", networkUserID,"data",userID));
+      await deleteDoc(doc(db,"friends", userID,"data",networkUserID));
     } catch (error) {
       console.log(error)
       return rejectWithValue("error remove from friends")
@@ -88,17 +80,7 @@ export const removeFromFriends = createAsyncThunk<any,propsAddToFriends,{rejectV
 const FriendsSlice = createSlice({
   name: "friends",
   initialState,
-  reducers: {
-    getFriends(state,action:PayloadAction<IProfile[]>){
-      state.currentUserFriends = action.payload
-    },
-    getFriendRequests(state,action:PayloadAction<IProfile[]>){
-      state.currentUserFriendRequests = action.payload
-    },
-    getMyFriendRequests(state,action:PayloadAction<IProfile[]>){
-      state.myFriendRequests = action.payload
-    },
-  },
+  reducers: {},
   extraReducers:(builder) =>{
     builder
       .addCase(addToFriends.pending,(state)=>{
@@ -120,6 +102,6 @@ const FriendsSlice = createSlice({
 
 })
 
-export const {getFriends,getFriendRequests,getMyFriendRequests} = FriendsSlice.actions
+export const {} = FriendsSlice.actions
 
 export default FriendsSlice.reducer

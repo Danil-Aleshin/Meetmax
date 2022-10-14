@@ -13,11 +13,19 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const EditProfile = () => {
 
-  const {currentUser,currentUser:{
+  const {hostUser:{
     userID,
-    dateOfBirthday
+    dateOfBirthday,
+    location,
+    email,
+    firstName,
+    gender,
+    lastName,
+    phoneNumber,
+    profileImg,
+    status
   },
-  } = useAppSelector(state => state.users)
+  } = useAppSelector(state => state.auth)
   const [startDate, setStartDate] = useState<Date | undefined>(dateOfBirthday?.toDate())
   const dispatch = useAppDispatch()
 
@@ -37,25 +45,25 @@ const EditProfile = () => {
     const newImg = e.target.files[0]
     newImg.path = `profileImages/${userID}`
     newImg.link = ""
-    const currentImg = currentUser.profileImg
+    const currentImg = profileImg
     dispatch(changeProfileImg({newImg,userID,currentImg}))
   }
   console.log()
   const editProfileFunc:SubmitHandler<authValue> = (data) => {
 
-    const newLocation = data.location === currentUser.location 
+    const newLocation = data.location === location 
     ? undefined 
     : data.location
 
-    const newFirstName = data.firstName === currentUser.firstName 
+    const newFirstName = data.firstName === firstName 
     ? undefined 
     : data.firstName
 
-    const newLastName = data.lastName === currentUser.lastName 
+    const newLastName = data.lastName === lastName 
     ? undefined 
     : data.lastName
 
-    const newPhoneNumber = data.phoneNumber === currentUser.phoneNumber 
+    const newPhoneNumber = data.phoneNumber === phoneNumber 
     ? undefined 
     : data.phoneNumber
 
@@ -84,7 +92,7 @@ const EditProfile = () => {
             <UserImg
               className='h-full'
               width='128'
-              src={currentUser.profileImg.link}
+              src={profileImg.link}
             />
             <label className='new-img' htmlFor='newImgBtn'></label>
             <input 
@@ -107,7 +115,7 @@ const EditProfile = () => {
           required="First Name is require field!"
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
           regExpError={"[A-z]"}
-          defaultValue={currentUser.firstName}
+          defaultValue={firstName}
           className=""
         />
         <InputAuth
@@ -119,7 +127,7 @@ const EditProfile = () => {
           required="Last Name is require field!"
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
           regExpError={"[A-z]"}
-          defaultValue={currentUser.lastName}
+          defaultValue={lastName}
           className=""
 
         />
@@ -132,7 +140,7 @@ const EditProfile = () => {
           required="Phone Number is require field!"
           regExp={/(?=^.{11,}$)^[0-9\s]*$/}
           regExpError={"[0-9] 11 characters"}
-          defaultValue={currentUser.phoneNumber}
+          defaultValue={phoneNumber}
           className=""
         />
         <InputAuth
@@ -141,10 +149,8 @@ const EditProfile = () => {
           name='location'
           register={register}
           error={errors.location}
-          required=""
           regExp={/(?=.*[a-z])(?=.*[A-Z])/g}
-          regExpError={"123"}
-          defaultValue={currentUser.location}
+          defaultValue={location}
           className=""
         />
         <div className="relative w-full">
@@ -156,6 +162,7 @@ const EditProfile = () => {
             dateFormat={"dd/MM/yyy"}
             scrollableYearDropdown
             showYearDropdown
+            
           >
           </DatePicker>
           <CakeIcon className='w-5 absolute top-3.3 left-3'/>

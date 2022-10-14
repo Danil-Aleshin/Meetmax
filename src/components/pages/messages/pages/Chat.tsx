@@ -1,92 +1,82 @@
-import { ChevronLeftIcon, InformationCircleIcon, PencilIcon, PhoneIcon, VideoCameraIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, InformationCircleIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Timestamp } from 'firebase/firestore'
 import  { FC, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Navigation } from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/react'
 import { editMessage, sendMessage } from '../../../../store/ChatSlice'
 import { useAppDispatch, useAppSelector } from '../../../hooks/appRedux'
-import useDate from '../../../hooks/useDate'
+import useMessages from '../../../hooks/requestsHooks/useMessages'
+import useProfile from '../../../hooks/requestsHooks/useProfile'
 import useInput from '../../../hooks/useInput'
-import { IChat, IChatData, IFile, IMessage, IUserInfo, TypeSetState, userID } from '../../../types/data'
+import {IChat, IChatOptions, IMessage, IUserInfo } from '../../../types/data'
 import AddMessageForm from '../../../ui/AddMessageForm'
 import ContentBlock from '../../../ui/ContentBlock'
-import ModalWindow from '../../../ui/modalWindow/ModalWindow'
 import UserImg from '../../../ui/UserImg'
 import AboutUserMenu from '../AboutUserMenu'
 import MessageCard from '../MessageCard'
 
 
 interface propsChat {
-
+  chatsOptions:IChatOptions[]
 }
 
 const Chat:FC<propsChat> = ({
-
+  chatsOptions
 }) => {
   const [aboutUserMenu, setAboutUserMenu] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [messageEditing, setMessageEditing] = useState<IMessage>()
-  const [chat, setChat] = useState<IChatData>()
-  const [userInfo, setUserInfo] = useState<IUserInfo>()
   const [filesAttachment, setFilesAttachment] = useState<any[]>([])
+  const [chatOptions, setChatOptions] = useState<IChatOptions>()
+
   const {companionID = ""} = useParams()
 
+  const {userID} = useAppSelector(state => state.auth)
 
-  const {allUsers,currentUser:{userID}} = useAppSelector(state => state.users)
-  const {status,chats} = useAppSelector(state => state.chats)
 
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    // messListRef.current.scrollTop = 999999
-    allUsers.map(user => {
-      if(user.userID === companionID){
-        
-        setUserInfo(user)
-      }
-    })
-    
-  }, [allUsers,companionID])
+  const {messages} = useMessages(companionID)
+  const {userInfo} = useProfile(companionID)
 
-  const messListRef = useRef<any>(null)
-
-  useEffect(() => {
-    chats.map(chat=>{
-      chat.chat.companionID === companionID && setChat(chat.chat)
-    })
-    
-  }, [chats])
+  const messListRef = useRef<HTMLUListElement>(null)
   
   useEffect(() => {
-    messListRef.current.scrollTop = messListRef.current.scrollHeight
-  },[chat])
-  
+    if (messListRef.current) {
+      messListRef.current.scrollBy({
+        behavior:"smooth",
+        top:messListRef.current.scrollHeight
+      })
+    }
+  },[messages])
 
+  useEffect(() => {
+    setChatOptions(undefined)
+    chatsOptions.map(chat => chat.companionID === companionID && setChatOptions(chat))
+  }, [companionID,chatsOptions])
+  
   const sendMess = () =>{
 
     const newMessage:IMessage = {
       id:Date.now().toString(),
       fromUserID:userID,
       text:messageInput.value.trim(),
-      date:new Date,
+      date:Timestamp.fromDate(new Date),
       state:"unread",
       imgs:filesAttachment
     }
-    
     if (newMessage.text.length !== 0 || newMessage.imgs.length !== 0) {
         dispatch(sendMessage({companionID,newMessage,userID}))
         messageInput.setValue("")
         setFilesAttachment([])
     }
   }
-
+  
   const editMessageFunc = () =>{
       const newText = messageInput.value.trim()
       const id = messageEditing?.id ? messageEditing?.id : ""
-      const messagesList = chat?.messages ? chat.messages : []
-  
-      if (newText.length > 0 && companionID) {
-        dispatch(editMessage({companionID,id,messagesList,userID,newText}))
+
+      if (newText.length > 0) {
+        dispatch(editMessage({companionID,id,userID,newText}))
       }
 
     messageInput.setValue("")
@@ -112,16 +102,20 @@ const Chat:FC<propsChat> = ({
             <ChevronLeftIcon className='icon w-5.5'/>
             <p>Back</p>
           </Link>
-          <Link to={`/${userInfo?.userID}`} className="flex gap-3 items-center">
-            <UserImg
-              width="40"
-              className='h-10'
-              src={userInfo?.profileImg.link}
-            />
-            <div className="flex flex-col gap-1">
-              <h2>{`${userInfo?.firstName} ${userInfo?.lastName}`}</h2>
-            </div>
-          </Link>
+          {userInfo && 
+            <Link to={`/${userInfo?.userID}`} className="flex gap-3 items-center">
+              { window.screen.width > 400 && 
+                <UserImg
+                  width="40"
+                  className='h-10'
+                  src={userInfo?.profileImg.link}
+                />
+              }
+              <div className="flex flex-col gap-1">
+                <h2>{`${userInfo?.firstName} ${userInfo?.lastName}`}</h2>
+              </div>
+            </Link>
+          }
           <div className="flex gap-3.5 items-center">
             <InformationCircleIcon
               onClick={()=>setAboutUserMenu(true)}
@@ -130,12 +124,11 @@ const Chat:FC<propsChat> = ({
           </div>
         </div>
         <ul className='messages__list' ref={messListRef}>
-          {chat?.messages.map(message=>
+          {messages?.map(message=>
           <MessageCard
+            companionID={companionID}
             key={message.id}
             message={message}
-            userInfo={userInfo}
-            messages={chat?.messages}
             setValue={messageInput.setValue}
             setIsEditing={setIsEditing}
             setMessageEditing={setMessageEditing}
@@ -168,8 +161,8 @@ const Chat:FC<propsChat> = ({
           />
         </div>
         <AboutUserMenu
-          chatCompanionID={chat?.companionID}
-          favorite={chat?.favorite}
+          chatCompanionID={companionID}
+          favorite={chatOptions?.favorite}
           userInfo={userInfo}
           state={aboutUserMenu}
           setState={setAboutUserMenu}

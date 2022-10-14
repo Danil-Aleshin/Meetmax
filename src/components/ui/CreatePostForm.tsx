@@ -1,5 +1,5 @@
 import { FaceSmileIcon, PhotoIcon, VideoCameraIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { fetchCreatePost } from '../../store/PostsSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux'
 import useInput from '../hooks/useInput'
@@ -14,6 +14,7 @@ import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebas
 import { storage } from '../../firebaseConfig'
 import { deleteImgRequest } from '../reusableFunctions/reusableFunctions'
 import { setActive } from '../../store/ViewPicturesSlice'
+import { Timestamp } from 'firebase/firestore'
 
 interface propsCreatePostForm{
 
@@ -25,7 +26,10 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
   const [filesAttachment, setFilesAttachment] = useState<IFile[]>([])
 
 
-  const {userID,profileImg} = useAppSelector(state => state.users.currentUser)
+  const {hostUser:{
+    profileImg,
+    userID
+  }} = useAppSelector(state => state.auth)
   const {status} = useAppSelector(state => state.posts)
   const dispatch = useAppDispatch()
   
@@ -74,7 +78,7 @@ const CreatePostForm:FC<propsCreatePostForm> = () => {
       authorID:userID,
       comments:[],
       text:newPostInput.value,
-      date:new Date,
+      date: Timestamp.fromDate(new Date),
       likes:[],
       imgs:filesAttachment,
     }

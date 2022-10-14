@@ -4,7 +4,7 @@ import AddMessageBtn from './addMessageBtn/AddMessageBtn'
 import InputText from './InputText'
 import Picker from 'emoji-picker-react';
 import { IFile, TypeSetState } from '../types/data';
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../../firebaseConfig';
 import { useAppDispatch, useAppSelector } from '../hooks/appRedux';
 import { deleteImgRequest } from '../reusableFunctions/reusableFunctions';
@@ -35,7 +35,7 @@ const AddMessageForm:FC<propsAddMessageForm> = memo(({
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
-  const {currentUser:{userID}} = useAppSelector(state => state.users)
+  const {userID} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
 
   const onEmojiClick = (event:any,emojiObject:any) => {

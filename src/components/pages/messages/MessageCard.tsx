@@ -3,14 +3,13 @@ import { FC, memo } from 'react'
 import { deleteMessage } from '../../../store/ChatSlice'
 import { setActive } from '../../../store/ViewPicturesSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/appRedux'
-import useDate from '../../hooks/useDate'
-import { IFile, IMessage, IUserInfo, TypeSetState } from '../../types/data'
+import { IFile, IMessage, IUserInfo, TypeSetState, userID } from '../../types/data'
+import { convertDate } from '../../utils/convertDate'
 
 
 interface propsMessageCard{
-  userInfo?:IUserInfo,
+  companionID:userID
   message:IMessage
-  messages?:IMessage[],
   setValue:TypeSetState<string>
   setIsEditing:TypeSetState<boolean>
   setMessageEditing:TypeSetState<IMessage | undefined>,
@@ -18,25 +17,20 @@ interface propsMessageCard{
 
 const MessageCard:FC<propsMessageCard> = memo(({
   message,
-  userInfo,
   message:{date,fromUserID,text,id,state},
-  messages,
   setValue,
   setIsEditing,
   setMessageEditing,
+  companionID
 }) => {
 
-  const {currentUser:{userID}} = useAppSelector(state => state.users)
+  const {userID} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
 
-  const messageDate = useDate(date)
+  const messageDate = convertDate('hours/min',date)
   
   const deleteMessageFunc = () => {
-    if (userInfo) {
-      const companionID = userInfo.userID
-      const messagesList = messages ? messages : []
-      dispatch(deleteMessage({companionID,id,messagesList,userID}))
-    }
+      dispatch(deleteMessage({companionID,id,userID}))
   }
 
   const editMessageActivation = () =>{
@@ -69,7 +63,7 @@ const MessageCard:FC<propsMessageCard> = memo(({
           <div className="p-2 bg-lightGray dark:bg-darkBlue rounded-lg max-w-sm flex gap-3">
             <p>{text}</p>
             <p className='text-xs self-end text-test dark:text-blue'>
-              {messageDate.time}
+              {messageDate}
             </p>
           </div>
           
